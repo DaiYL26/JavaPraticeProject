@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.login.dao.UserMapper">
+    <insert id="registerAccount">
+        insert into user (mail, phone, pwd) values (#{mail}, #{phone}, password(#{password}))
+    </insert>
+
+    <update id="updateAccount">
+        update user set pwd = password(#{password}) where mail = #{mail}
+    </update>
+
+    <select id="checkUser" resultType="com.example.login.model.User">
+        select * from user where pwd = password(#{password}) and ( mail = #{account} or phone = #{account} )
+    </select>
+</mapper>

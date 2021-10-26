@@ -1,0 +1,33 @@
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 60%;
+    height: 60%;
+}
+
+
+.row {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.input-group-addon {
+    line-height: 40px;
+    text-align: center;
+}
+
+.login-header {
+    height: 30%;
+    line-height: 30%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

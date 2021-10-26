@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>主页</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="text-center">
+            <h1><b>登录成功</b></h1>
+        </div>
+
+        <div class="card mx-auto" style="width:400px">
+            <img class="card-img-top" src="https://static.runoob.com/images/mix/img_avatar.png" alt="Card image"
+                style="width:100%">
+            <div class="card-body">
+                <h4 class="card-title">大帅</h4>
+                <p class="card-text">This guy is cool. He didn't leave anything.</p>
+                <button class="btn btn-primary" disabled>
+                    <span class="spinner-border spinner-border-sm"></span>
+                    帅帅帅
+                </button>
+            </div>
+        </div>
+        <br>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            let delay = 0;
+            let handler = setInterval(function () {
+
+                if (delay === 0) {
+                    delay = 1;
+                    return
+                }
+
+                $.get("api/isLogin", function (res) {
+                    if (res.data !== true) {
+                        clearInterval(handler)
+                        alert("您的账号已经在别处登录！")
+                        $(location).attr("href", "/")
+                    }
+                })
+            }, 3000)
+
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+    <script  th:src="@{/js/login.js}"></script>
+</head>
+
+<body th:background="@{/images/background.png}" background="../static/images/background.png">
+
+    <div class="container">
+        <!--    登录注册卡片-->
+        <div class="card shadow bg-light rounded ">
+            <div class="row">
+                <!--            第一列-->
+                <div class="col">
+                    <div class="login-header">
+                        <h3><b>登录</b></h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div>
+                            <!--                        输入表单-->
+                            <form class="bs-example bs-example-form" role="form">
+                                <div class="input-group">
+                                    <span class="input-group-addon">账户：</span>
+                                    <input id="account" name="account" type="text" style="height: 40px"
+                                        class="form-control" placeholder="请输入手机号/邮箱">
+                                </div>
+                                <br>
+                                <div class="input-group">
+                                    <span class="input-group-addon">密码：</span>
+                                    <input id="userPwd" name="userPwd" type="password" style="height: 40px"
+                                        class="form-control" placeholder="请输入密码">
+                                </div>
+                                <br>
+                                <div data-toggle="modal" data-target="#myModal">
+                                    <div class="text-center">
+                                        <button type="button"
+                                            class="btn btn-outline-light text-dark btn-sm">忘记密码？</button>
+                                    </div>
+                                </div>
+                                <!--                进入按钮-->
+                                <div>
+                                    <div class="text-center">
+                                        <button id="loginBtn" style="border-radius: 15%" type="button" class="btn btn-success btn-lg">
+                                            进入
+                                        </button>
+                                    </div>
+                                </div>
+                                <br><br><br><br>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--            第二列-->
+                <div style="background-color: #1f6f4a" class="col text-white">
+                    <div style="margin-top: 100px">
+                        <div class="text-center">
+                            <h2><b>No account?</b></h2><br>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <div class="spinner-grow text-warning"></div>
+                            <p>Register to join us now and have fun with us every day！</p>
+
+                            <button style="border-radius: 18%" type="button" class="btn btn-outline-light  text-white"
+                                data-toggle="modal" data-target="#myModal2">注册</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--        忘记密码弹框-->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">
+                            找回密码
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>邮箱号：</h4>
+                        <input id="forgetMail" name="forgetMail" type="text" placeholder="请输入您的邮箱号">
+                    </div>
+                    <div class="modal-body">
+                        <h4>新密码：</h4>
+                        <input id="forgetPwd" name="forgetPwd" type="password" placeholder="请输入您的密码">
+                    </div>
+                    <div class="modal-body">
+                        <h4>再次确认：</h4>
+                        <input id="forgetPwd2" name="forgetPwd2" type="password" placeholder="请输入您的密码">
+                    </div>
+                    <div class="modal-body">
+                        <h4>验证码：</h4>
+                        <input id="forgetCode" name="forgetCode" type="text" placeholder="请输入验证码">
+
+                        <!--                    找回密码btn-->
+                        <button id="forgetGetBtn" style="margin-left: 15px;" type="button" class="btn btn-warning">
+                            获取验证码
+                        </button>
+                        <span id="forgetTimer"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="forgetConfirm" type="button" class="btn btn-info">
+                            完成
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!--    注册对话框-->
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel2">
+                            注册页面
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                        </button>
+
+                    </div>
+                    <div class="modal-body">
+                        <h4>邮箱：</h4>
+                        <input id="registerMail" name="registerMail" type="text" placeholder="请输入您的邮箱号">
+                    </div>
+                    <div class="modal-body">
+                        <h4>电话：</h4>
+                        <input id="registerPhone" name="registerPhone" type="text" placeholder="请输入您的电话">
+                    </div>
+                    <div class="modal-body">
+                        <h4>密码：</h4>
+                        <input id="registerPwd" name="registerPwd" type="password" placeholder="请输入您的密码">
+                    </div>
+                    <div class="modal-body">
+                        <h4>确认一次：</h4>
+                        <input id="registerPwd2" name="registerPwd2" type="password" placeholder="请输入您的密码">
+                    </div>
+                    <div class="modal-body">
+                        <h4>验证：</h4>
+                        <input id="verifyCode" name="verifyCode" type="text" placeholder="请输入验证码">
+                        <!--                    获取验证码btn-->
+                        <button id="getCodeBtn" type="button" style="margin-left: 15px" class="btn btn-warning">
+                            获取验证码
+                        </button>
+                        <span id="registerTimer"></span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="registerConfirm" type="button" class="btn btn-info">
+                            确认注册
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+    </div>
+
+
+</body>
+
+</html>
