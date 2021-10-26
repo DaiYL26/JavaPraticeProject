@@ -1,6 +1,8 @@
 package com.example.login.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.util.SaResult;
 import com.example.login.service.UserService;
 import com.example.login.vo.Result;
 import com.example.login.vo.UserVo;
@@ -62,8 +64,8 @@ public class ApiController {
     }
 
     @PostMapping("/register")
-    public Result register(String mail, String phone, String password, String verifyCode) {
-        boolean isRegister = userService.register(mail, phone, password, verifyCode);
+    public Result register(String mail, String phone, String password, String nickName, String verifyCode) {
+        boolean isRegister = userService.register(mail, phone, password, nickName, verifyCode);
 
         if (isRegister) {
             return Result.success(Boolean.TRUE);
@@ -83,6 +85,25 @@ public class ApiController {
 //        StpUtil.checkLogin();
         Boolean login = StpUtil.isLogin();
         return Result.success(login);
+    }
+
+    @SaCheckLogin
+    @PostMapping("/getUserInfo")
+    public Result getUserInfo(Integer id) {
+        UserVo userInfo = userService.getUserInfo(id);
+
+        if (userInfo == null) {
+            return Result.fail(500, "系统错误");
+        } else {
+            return Result.success(userInfo);
+        }
+    }
+
+    @SaCheckLogin
+    @GetMapping("/logout")
+    public Boolean loginOut() {
+        StpUtil.logout();
+        return true;
     }
 
 }

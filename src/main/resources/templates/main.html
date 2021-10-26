@@ -12,7 +12,12 @@
 </head>
 
 <body>
-    <div class="container">
+
+    <div style="float: right" >
+        <button type="button" id="logoutBtn" class="btn mr-5 border-dark">退出登录</button>
+    </div>
+
+    <div class="container mt-5">
         <div class="text-center">
             <h1><b>登录成功</b></h1>
         </div>
@@ -21,12 +26,8 @@
             <img class="card-img-top" src="https://static.runoob.com/images/mix/img_avatar.png" alt="Card image"
                 style="width:100%">
             <div class="card-body">
-                <h4 class="card-title">大帅</h4>
+                <h4 id="nickName" class="card-title">大帅</h4>
                 <p class="card-text">This guy is cool. He didn't leave anything.</p>
-                <button class="btn btn-primary" disabled>
-                    <span class="spinner-border spinner-border-sm"></span>
-                    帅帅帅
-                </button>
             </div>
         </div>
         <br>
@@ -35,6 +36,25 @@
 
     <script>
         $(document).ready(function () {
+            
+            $('#logoutBtn').click(function () {
+                $.get("api/logout", function (res) {
+                    if (res == true) {
+                        $(location).attr('href', '/')
+                    }
+                })
+            })
+
+            let jsonStr = localStorage.getItem("user")
+            let user = JSON.parse(jsonStr)
+
+            $.post("api/getUserInfo", {
+                id: user.id
+            }, function (res) {
+                console.log(res)
+                $('#nickName').text(res.data.nickName)
+                localStorage.removeItem("user")
+            })
 
             let delay = 0;
             let handler = setInterval(function () {

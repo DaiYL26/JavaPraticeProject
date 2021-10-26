@@ -13,6 +13,6 @@ public interface UserMapper extends BaseMapper<User> {
 
     public int updateAccount(String mail, String password);
 
-    public int registerAccount(String mail, String phone, String password);
+    public int registerAccount(String mail, String phone, String password, String nickName);
 
 }

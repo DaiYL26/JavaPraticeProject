@@ -1,5 +1,6 @@
 package com.example.login;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.login.dao.UserMapper;
 import com.example.login.model.User;
 import com.example.login.service.MailService;
@@ -38,8 +39,12 @@ class LoginApplicationTests {
 //        boolean b = userService.resetPassword("877669110@qq.com", "12345678", String.valueOf(x));
 //        System.out.println(b);
 //        System.out.println(userService.checkUser("877669110@qq.com", "123456"));
-        int i = userMapper.updateAccount("16287872@qq.com", "1234567");
-        System.out.println(i);
+//        int i = userMapper.updateAccount("16287872@qq.com", "1234567");
+//        System.out.println(i);
+
+        User id = userMapper.selectOne(new QueryWrapper<User>().eq("id", 7));
+        System.out.println(id);
+
     }
 
 }

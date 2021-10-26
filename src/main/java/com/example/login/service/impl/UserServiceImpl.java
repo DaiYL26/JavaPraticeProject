@@ -62,10 +62,10 @@ public class UserServiceImpl implements UserService {
      * @return 是否注册成功
      */
     @Override
-    public boolean register(String registerMail, String registerPhone, String registerPassword, String registerCode) {
+    public boolean register(String registerMail, String registerPhone, String registerPassword, String nickName,String registerCode) {
 
         if (mailService.verify(registerMail, registerCode)) {
-            int i = userMapper.registerAccount(registerMail, registerPhone, registerPassword);
+            int i = userMapper.registerAccount(registerMail, registerPhone, registerPassword, nickName);
             return i > 0;
         }
 
@@ -93,6 +93,19 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectOne(queryWrapper);
 
         return user == null;
+    }
+
+    @Override
+    public UserVo getUserInfo(Integer id) {
+        User res = userMapper.selectOne(new QueryWrapper<User>().eq("id", id));
+        if (res == null) {
+            return null;
+        }
+
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(res, userVo);
+
+        return userVo;
     }
 
 }

@@ -111,6 +111,8 @@ $(document).ready(function () {
             password: password
         }, function (res) {
             if (res.data !== null) {
+                console.log(JSON.stringify(res.data))
+                localStorage.setItem("user", JSON.stringify(res.data))
                 $(location).attr("href", "/main")
             } else {
                 alert(res.msg)
@@ -165,6 +167,7 @@ $(document).ready(function () {
         let phone = $('#registerPhone').val()
         let pwd = $('#registerPwd').val()
         let pwd2 = $('#registerPwd2').val()
+        let nickName = $('#registerNickName').val()
         let verifyCode = $('#verifyCode').val()
 
         if (!checkFormat(mail, pwd, pwd2)) {
@@ -176,10 +179,16 @@ $(document).ready(function () {
             return
         }
 
+        if (nickName == "" || nickName.length < 2 && nickName.length > 12) {
+            alert("昵称不能为空且应为 2 ~ 12 位")
+            return;
+        }
+
         $.post("api/register", {
             mail: mail,
             phone, phone,
             password: pwd,
+            nickName: nickName,
             verifyCode: verifyCode
         }, function (res) {
             if (res.data === true) {
