@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 @TableName("user")
 public interface UserMapper extends BaseMapper<User> {
 
-    public User checkUser(String account, String password);
+    public User checkUser(String account);
 
     public int updateAccount(String mail, String password);
 

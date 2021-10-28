@@ -5,6 +5,7 @@ import com.example.login.dao.UserMapper;
 import com.example.login.model.User;
 import com.example.login.service.MailService;
 import com.example.login.service.UserService;
+import com.example.login.utils.PasswordUtils;
 import com.example.login.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,11 @@ public class UserServiceImpl implements UserService {
     public UserVo checkUser(String account, String pwd) {
 
         UserVo userVo = new UserVo();
-        User user = userMapper.checkUser(account, pwd);
 
-        if (user == null) {
+        //获取用户信息
+        User user = userMapper.checkUser(account);
+
+        if (user == null || !PasswordUtils.match(pwd, user.getPwd())) {
             return null;
         }
 
@@ -50,6 +53,9 @@ public class UserServiceImpl implements UserService {
     public boolean resetPassword(String mail, String newPassword, String verifyCode) {
 
         if (mailService.verify(mail, verifyCode)) {
+
+            newPassword = PasswordUtils.getEncodePwd(newPassword);
+
             int i = userMapper.updateAccount(mail, newPassword);
             return i > 0;
         }
@@ -65,6 +71,9 @@ public class UserServiceImpl implements UserService {
     public boolean register(String registerMail, String registerPhone, String registerPassword, String nickName,String registerCode) {
 
         if (mailService.verify(registerMail, registerCode)) {
+
+            registerPassword = PasswordUtils.getEncodePwd(registerPassword);
+
             int i = userMapper.registerAccount(registerMail, registerPhone, registerPassword, nickName);
             return i > 0;
         }

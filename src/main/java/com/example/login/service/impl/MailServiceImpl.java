@@ -61,6 +61,10 @@ public class MailServiceImpl implements MailService {
 
         String code = redisTemplate.opsForValue().get(key);
 
+        if (code != null) {
+            redisTemplate.delete(key);
+        }
+
         return code != null;
     }
 
