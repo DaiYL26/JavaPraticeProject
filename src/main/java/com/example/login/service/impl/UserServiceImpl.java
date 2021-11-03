@@ -10,7 +10,6 @@ import com.example.login.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -81,6 +80,8 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+
+
     /**
      * 获取验证码
      * @return 验证码是否发生成功
@@ -101,7 +102,7 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("mail", mail);
         User user = userMapper.selectOne(queryWrapper);
 
-        return user == null;
+        return user != null;
     }
 
     @Override
@@ -115,6 +116,22 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(res, userVo);
 
         return userVo;
+    }
+
+    @Override
+    public UserVo checkCodeLogin(String mail, String code) {
+
+        if (mailService.verify(mail, code)) {
+
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("mail", mail);
+            User user = userMapper.selectOne(queryWrapper);
+            UserVo userVo = new UserVo();
+            BeanUtils.copyProperties(user, userVo);
+            return userVo;
+        }
+
+        return null;
     }
 
 }

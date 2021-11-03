@@ -95,7 +95,7 @@ $(document).ready(function () {
                 alert("重置成功")
                 $('#myModal').modal('hide')
             } else {
-                alert("重置失败，请检查验证码")
+                alert("重置失败，请检查验证码或邮箱")
             }
 
         })
@@ -199,6 +199,100 @@ $(document).ready(function () {
             }
         })
 
+    })
+
+    $('#CodeLoginBtn').hide()
+    $('#enterCode').hide()
+
+    $('#switcher').click(function () {
+        // console.log(123)
+        //进入按钮切换
+        if ($('#switcher').text() == '验证码登陆') {
+            $('#CodeLoginBtn').show()
+            $('#enterCode').show()
+            $('#enterPwd').hide()
+            $('#loginBtn').hide()
+            $('#switcher').text('密码登陆')
+            $('#account').attr('placeholder', '输入您的邮箱')
+        } else {
+            $('#CodeLoginBtn').hide()
+            $('#enterCode').hide()
+            $('#enterPwd').show()
+            $('#loginBtn').show()
+            $('#switcher').text('验证码登陆')
+            $('#account').attr('placeholder', '输入您的邮箱/手机')
+        }
+    })
+
+    // 登陆验证码按钮
+    $('#loginGetBtn').click(function () {
+        let mail = $('#account').val()
+
+        if (!isEmail(mail)) {
+            alert("邮箱格式不正确")
+            return
+        }
+
+        if (time < 60) {
+            alert("请" + time + "秒后，再试一次")
+            return;
+        }
+
+        $.post("api/verify", {
+            mail: mail
+        }, function (res) {
+
+            if (res.data === true) {
+                $('#loginGetBtn').attr('disabled', true)
+
+                let timer = setInterval(function () {
+                    if (time == 0) {
+                        time = 60
+                        $('#loginTimer').text('')
+                        $('#loginGetBtn').attr('disabled', false)
+                        $('#loginGetBtn').text('获取验证码')
+                        clearInterval(timer)
+                    } else {
+                        // $('#loginTimer').text(time)
+                        $('#loginGetBtn').text('请等待' + time + '秒')
+                        time --
+                    }
+                }, 1000)
+            } else {
+                alert('请稍后再试~')
+            }
+
+        })
+    })
+
+    // 验证码登陆按钮
+    $('#CodeLoginBtn').click(function () {
+
+        let account= $('#account').val();
+        let code = $('#loginCode').val();
+
+        if (!isEmail(account)) {
+            alert("邮箱格式错误")
+            return
+        }
+
+        if (code.length != 6) {
+            alert("验证码为 6 位")
+            return
+        }
+
+        $.post("api/codeLogin", {
+            mail: account,
+            code: code
+        }, function (res) {
+            if (res.data !== null) {
+                console.log(JSON.stringify(res.data))
+                localStorage.setItem("user", JSON.stringify(res.data))
+                $(location).attr("href", "/main")
+            } else {
+                alert(res.msg)
+            }
+        })
     })
 
 

@@ -16,4 +16,6 @@ public interface UserService {
 
     public UserVo getUserInfo(Integer id);
 
+    public UserVo checkCodeLogin(String mail, String code);
+
 }

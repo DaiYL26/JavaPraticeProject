@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserVo {
 
-    private int id;
+    private Long id;
 
     private String mail;
 

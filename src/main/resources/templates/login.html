@@ -10,8 +10,8 @@
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
-    <script  th:src="@{/js/login.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/login.css" th:href="@{/css/login.css}" />
+    <script src="../static/js/login.js" th:src="@{/js/login.js}"></script>
 </head>
 
 <body th:background="@{/images/background.png}" background="../static/images/background.png">
@@ -23,7 +23,7 @@
                 <!--            第一列-->
                 <div class="col">
                     <div class="login-header">
-                        <h3><b>登录</b></h3>
+                        <h3><b>进入战舰</b></h3>
                     </div>
 
                     <div class="card-body">
@@ -36,22 +36,47 @@
                                         class="form-control" placeholder="请输入手机号/邮箱">
                                 </div>
                                 <br>
-                                <div class="input-group">
-                                    <span class="input-group-addon">密码：</span>
-                                    <input id="userPwd" name="userPwd" type="password" style="height: 40px"
-                                        class="form-control" placeholder="请输入密码">
-                                </div>
-                                <br>
-                                <div data-toggle="modal" data-target="#myModal">
-                                    <div class="text-center">
-                                        <button type="button"
-                                            class="btn btn-outline-light text-dark btn-sm">忘记密码？</button>
+<!--                                密码输入框block-->
+                                <div id="enterPwd">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">密码：</span>
+                                        <input id="userPwd" name="userPwd" type="password" style="height: 40px"
+                                               class="form-control" placeholder="请输入密码">
                                     </div>
+                                </div>
+
+<!--                                验证码输入框block-->
+                                <div id="enterCode">
+                                    <div class="input-group" >
+                                        <span class="input-group-addon">验证：</span>
+                                        <input id="loginCode" name="forgetCode" style="height: 40px" type="text" class="form-control" placeholder="请输入验证码">
+                                        <!--                                    登陆验证码-->
+                                        <button id="loginGetBtn" style="margin-left: 15px;" type="button" class="btn btn-warning">
+                                            获取验证码
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <br>
+                                <div style="display: flex; justify-content: center">
+                                    <div data-toggle="modal" data-target="#myModal">
+                                        <div class="text-center">
+                                            <button type="button"
+                                                    class="btn btn-outline-light text-dark btn-sm">忘记密码？
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button id="switcher" type="button"
+                                            class="btn ml-2 btn-outline-light text-dark btn-sm">验证码登陆
+                                    </button>
                                 </div>
                                 <!--                进入按钮-->
                                 <div>
                                     <div class="text-center">
                                         <button id="loginBtn" style="border-radius: 15%" type="button" class="btn btn-success btn-lg">
+                                            进入
+                                        </button>
+                                        <button id="CodeLoginBtn" style="border-radius: 15%" type="button" class="btn btn-success btn-lg">
                                             进入
                                         </button>
                                     </div>
@@ -67,7 +92,7 @@
                 <div style="background-color: #1f6f4a" class="col text-white">
                     <div style="margin-top: 100px">
                         <div class="text-center">
-                            <h2><b>No account?</b></h2><br>
+                            <h2><b>没有账户?</b></h2><br>
                             <div class="spinner-grow text-warning"></div>
                             <div class="spinner-grow text-warning"></div>
                             <div class="spinner-grow text-warning"></div>
@@ -79,7 +104,7 @@
                             <div class="spinner-grow text-warning"></div>
                             <div class="spinner-grow text-warning"></div>
                             <div class="spinner-grow text-warning"></div>
-                            <p>Register to join us now and have fun with us every day！</p>
+                            <p>现在就注册加入我们一起探索星际吧！</p>
 
                             <button style="border-radius: 18%" type="button" class="btn btn-outline-light  text-white"
                                 data-toggle="modal" data-target="#myModal2">注册</button>

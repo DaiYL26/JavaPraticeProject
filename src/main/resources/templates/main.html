@@ -40,6 +40,7 @@
             $('#logoutBtn').click(function () {
                 $.get("api/logout", function (res) {
                     if (res == true) {
+                        localStorage.removeItem("user")
                         $(location).attr('href', '/')
                     }
                 })
@@ -48,22 +49,17 @@
             let jsonStr = localStorage.getItem("user")
             let user = JSON.parse(jsonStr)
 
+            console.log(user)
+
             $.post("api/getUserInfo", {
                 id: user.id
             }, function (res) {
                 console.log(res)
                 $('#nickName').text(res.data.nickName)
-                localStorage.removeItem("user")
+                // localStorage.removeItem("user")
             })
 
-            let delay = 0;
             let handler = setInterval(function () {
-
-                if (delay === 0) {
-                    delay = 1;
-                    return
-                }
-
                 $.get("api/isLogin", function (res) {
                     if (res.data !== true) {
                         clearInterval(handler)

@@ -61,11 +61,11 @@ public class MailServiceImpl implements MailService {
 
         String code = redisTemplate.opsForValue().get(key);
 
-        if (code != null) {
+        if (code != null && code.equals(verifyCode)) {
             redisTemplate.delete(key);
         }
 
-        return code != null;
+        return verifyCode.equals(code);
     }
 
     @Override

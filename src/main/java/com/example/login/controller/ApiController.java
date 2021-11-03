@@ -2,7 +2,6 @@ package com.example.login.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import com.example.login.service.UserService;
 import com.example.login.vo.Result;
 import com.example.login.vo.UserVo;
@@ -76,6 +75,18 @@ public class ApiController {
             } else {
                 return Result.fail(500, "该邮箱已存在");
             }
+        }
+    }
+
+    @PostMapping("/codeLogin")
+    public Result codeLogin(String mail, String code) {
+        UserVo userVo = userService.checkCodeLogin(mail, code);
+
+        if (userVo == null) {
+            return Result.fail(500, "验证码错误");
+        } else {
+            StpUtil.login(userVo.getId());
+            return Result.success(userVo);
         }
 
     }
