@@ -8,6 +8,8 @@ import com.example.login.service.UserService;
 import com.example.login.utils.PasswordUtils;
 import com.example.login.vo.UserVo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -18,9 +20,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
-    public UserServiceImpl(MailService mailService, UserMapper userMapper) {
+    private final StringRedisTemplate redisTemplate;
+
+    public UserServiceImpl(MailService mailService, UserMapper userMapper, StringRedisTemplate redisTemplate) {
         this.mailService = mailService;
         this.userMapper = userMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     /**
@@ -34,6 +39,8 @@ public class UserServiceImpl implements UserService {
 
         //获取用户信息
         User user = userMapper.checkUser(account);
+
+        redisTemplate.opsForValue().setIfAbsent(user.getId() + ":todayNum", "0");
 
         if (user == null || !PasswordUtils.match(pwd, user.getPwd())) {
             return null;
@@ -74,6 +81,7 @@ public class UserServiceImpl implements UserService {
             registerPassword = PasswordUtils.getEncodePwd(registerPassword);
 
             int i = userMapper.registerAccount(registerMail, registerPhone, registerPassword, nickName);
+
             return i > 0;
         }
 

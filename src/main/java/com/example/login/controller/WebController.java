@@ -14,7 +14,7 @@ public class WebController {
         return "login";
     }
 
-    @SaCheckLogin
+//    @SaCheckLogin
     @GetMapping("/main")
     public String toMain() {
         return "main";

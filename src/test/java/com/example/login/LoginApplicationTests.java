@@ -1,18 +1,15 @@
 package com.example.login;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.example.login.dao.UserMapper;
-import com.example.login.model.User;
-import com.example.login.service.MailService;
-import com.example.login.service.UserService;
+import com.example.login.config.RequestDataHelper;
+import com.example.login.dao.*;
+import com.example.login.service.*;
+import org.apache.thrift.TException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @SpringBootTest
 class LoginApplicationTests {
@@ -29,22 +26,34 @@ class LoginApplicationTests {
     @Autowired
     UserService userService;
 
+
+    @Autowired
+    private SearchService searchService;
+
+    @Autowired
+    HomePageService homePageService;
+
+    @Autowired
+    LearnService learnService;
+
+    @Autowired
+    WordMapper wordMapper;
+
+    @Autowired
+    DictMapper dictMapper;
+
+    @Autowired
+    RecordMapper recordMapper;
+
+    @Autowired
+    ReviewPriorMapper reviewPriorMapper;
+
+
+
     @Test
-    void contextLoads() throws InterruptedException {
+    void contextLoads() throws InterruptedException, TException {
 
-//        userService.register("1516162635@qq.com", "")
-//        int x = mailService.sendVerifyCode("877669110@qq.com");
-//        System.out.println(x);
-//        Thread.sleep(3000);
-//        boolean b = userService.resetPassword("877669110@qq.com", "12345678", String.valueOf(x));
-//        System.out.println(b);
-//        System.out.println(userService.checkUser("877669110@qq.com", "123456"));
-//        int i = userMapper.updateAccount("16287872@qq.com", "1234567");
-//        System.out.println(i);
-
-        User id = userMapper.selectOne(new QueryWrapper<User>().eq("id", 7));
-        System.out.println(id);
+        System.out.println(redisTemplate.opsForValue().get("name"));
 
     }
-
 }
