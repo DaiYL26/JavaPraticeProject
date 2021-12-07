@@ -20,4 +20,18 @@ public class WebController {
         return "main";
     }
 
+    @GetMapping("/review")
+    public String toReview() {
+        return "review";
+    }
+
+    @GetMapping("/slides")
+    public String toSlides() {
+        return "slides";
+    }
+
+    @GetMapping("/settings")
+    public String setting() {
+        return "setting";
+    }
 }

@@ -1,20 +1,23 @@
-package com.example.login.model;
+package com.example.login.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.sql.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("review_prior")
-public class ReviewPrior {
-    private Long userid;
+@ToString
+public class ReviewWordVo {
+
+    private Boolean isPrior;
     private Integer id;
     private Integer dictID;
-    private Integer reviewCount;
+//    private Integer left;
     private Date timestamp;
+    private String json;
+
 }

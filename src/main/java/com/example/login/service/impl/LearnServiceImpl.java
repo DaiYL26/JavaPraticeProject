@@ -5,14 +5,16 @@ import com.example.login.config.RequestDataHelper;
 import com.example.login.dao.*;
 import com.example.login.model.Plan;
 import com.example.login.service.LearnService;
+import com.example.login.utils.TimeUtils;
 import com.example.login.vo.Result;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class LearnServiceImpl implements LearnService {
@@ -48,6 +50,11 @@ public class LearnServiceImpl implements LearnService {
             Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCur", 1));
             count = plan.getCount();
             redisTemplate.opsForValue().setIfPresent(String.valueOf(userid) + ":todayNum", "0");
+        }
+
+        if (isDone == null) {
+            redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayNum", "0");
+            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
         }
 
         System.out.println(userid + " " + dictID + " " + count + " " + hadMem + " " + isMore);
@@ -98,7 +105,8 @@ public class LearnServiceImpl implements LearnService {
 
     @Override
     public void setPlanStatus(Long userid) {
-        Boolean aTrue = redisTemplate.opsForValue().setIfAbsent(String.valueOf(userid) + ":isDone", "true", 22, TimeUnit.HOURS);
+        Boolean aTrue = redisTemplate.opsForValue().setIfAbsent(String.valueOf(userid) + ":isDone", "true");
+        redisTemplate.expireAt(String.valueOf(userid) + ":isDone", TimeUtils.getNextDayTimestamp());
         Boolean aBoolean = redisTemplate.opsForValue().setIfPresent(String.valueOf(userid) + ":todayNum", "0");
 //        System.out.println(aTrue + " " + aBoolean);
 //        System.out.println("Mark Done");
@@ -113,5 +121,34 @@ public class LearnServiceImpl implements LearnService {
             todayNum = "0";
         }
         return Integer.parseInt(todayNum);
+    }
+
+    public Result getRandomWords(Long userid, Integer count) {
+        Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCUr", 1));
+
+        Integer dictID = 1;
+
+        if (plan != null) {
+            dictID = plan.getDictID();
+        }
+
+        int bound = dictMapper.selectById(dictID).getTotalNum();
+
+        HashMap<String, Integer> dictMap = new HashMap<>();
+        dictMap.put("dictID", dictID);
+        RequestDataHelper.setRequestData(dictMap);
+
+        ArrayList<Integer> ids = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            int id = ThreadLocalRandom.current().nextInt(1, bound);
+            ids.add(id);
+        }
+
+        ArrayList<String> datas = new ArrayList<>();
+
+        wordMapper.selectBatchIds(ids).forEach(e -> datas.add(e.getJson()));
+
+        return Result.success(datas);
     }
 }

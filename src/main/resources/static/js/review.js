@@ -30,7 +30,11 @@ const AttributeBinding = {
         }
     },
     methods: {
+        toLearn() {
+            $(location).attr('href', '/main')
+        },
         logout() {
+            // $.post()
             $(location).attr('href', '/')
         },
         // 搜索
@@ -90,8 +94,8 @@ const AttributeBinding = {
             $('#button-addon2').attr("disabled",true)
         },
         // 回到首页
-        toReview() {
-            $(location).attr('href', '/review')
+        backHome() {
+            $(location).attr('href', '/main')
         },
         // 拼写确认
         testConfirm() {
@@ -106,32 +110,30 @@ const AttributeBinding = {
                 return
             }
             this.isConfirm = true
-            if (that.speelWord.trim() === that.words[that.curIndex].word.trim()) {
+            if (that.speelWord.trim() === that.words[that.curIndex].json.word.trim()) {
                 bs4pop.notice('拼写正确', {position: 'topcenter', type: 'success'})
             } else {
-                bs4pop.notice('拼写错误，已加入重点复习对象', {position: 'topcenter', type: 'warning'})
+                bs4pop.notice('拼写错误', {position: 'topcenter', type: 'warning'})
             }
 
             setTimeout(function () {
                 that.isConfirm = false
-                console.log(that.words[that.curIndex].word.trim())
-                if (that.speelWord.trim() === that.words[that.curIndex].word.trim()) {
+                console.log(that.words[that.curIndex].json.word.trim())
+                if (that.speelWord.trim() === that.words[that.curIndex].json.word.trim()) {
                     console.log('正确')
 
-                    // console.log(that.user.id, that.status.dictID, that.words[that.curIndex].wordRank);
-
                     console.log(that.curIndex);
-                    $.post("/home/addRecord", {
+                    $.post("/Review/updatePriorWord", {
                         userid: that.user.id,
-                        dictID: that.status.dictID,
-                        id: that.words[that.curIndex].wordRank,
-                        isMem: true
+                        dictID: that.words[that.curIndex].dictID,
+                        id: that.words[that.curIndex].json.wordRank,
+                        isRight: true
                     })
                     if (that.curIndex + 1 >= that.words.length) {
                         console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
-                        $.post("/home/setPlanStatus", {
+                        $.post("/Review/setReviewStatus", {
                             userid: that.user.id
                         })
                         that.curIndex = 0
@@ -143,17 +145,17 @@ const AttributeBinding = {
                 } else {
                     console.log('拼写错误')
                     console.log(that.curIndex);
-                    $.post("/home/addRecord", {
+                    $.post("/Review/updatePriorWord", {
                         userid: that.user.id,
-                        dictID: that.status.dictID,
-                        id: that.words[that.curIndex].wordRank,
-                        isMem: false
+                        dictID: that.words[that.curIndex].dictID,
+                        id: that.words[that.curIndex].json.wordRank,
+                        isRight: false
                     })
                     if (that.curIndex + 1 >= that.words.length) {
                         console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
-                        $.post("/home/setPlanStatus", {
+                        $.post("/Review/setReviewStatus", {
                             userid: that.user.id
                         })
                         $('#button-addon2').attr("disabled",false)
@@ -182,22 +184,21 @@ const AttributeBinding = {
             }
         },
 
-        getWords(userid, dictID, count, hadMem, isMore) {
+        getWords(userid,  count, isMore) {
             let that = this
-            console.log(userid, dictID, count, hadMem, isMore)
-            $.post("/home/getWords", {
+            console.log(userid, count, isMore)
+            $.post("/Review/getWords", {
                 userid: userid,
-                dictID: dictID,
                 count: count,
-                hadMem: hadMem,
                 isMore: isMore
             }, function (res) {
                 console.log(res)
                 if (res.code == 200) {
                     for (let i = 0; i < res.data.length; i ++) {
-                        let word = JSON.parse(res.data[i])
+                        let word = JSON.parse(res.data[i].json)
+                        res.data[i].json = word
                         // console.log(word)
-                        that.words.push(word)
+                        that.words.push(res.data[i])
                     }
                     console.log(that.words);
                 }
@@ -206,13 +207,13 @@ const AttributeBinding = {
 
         async load() {
             let that = this
-            $.post("/home/getStatus", {
+            $.post("/Review/getStatus", {
                 userid: that.user.id
             }, function (res) {
                 if (res.code == 200) {
                     console.log(res.data)
                     let status = res.data
-                    if (status == null) {
+                    if (status.isNotPlan) {
                         that.is_home = false
                         that.is_null = true
                     }
@@ -223,7 +224,10 @@ const AttributeBinding = {
                         isMore = true
                     }
 
-                    that.getWords(that.user.id, status.dictID, status.count, status.hadMem, isMore)
+                    if (status.isNotPlan)
+                        return
+
+                    that.getWords(that.user.id, status.count, isMore)
                 }
             })
         }
@@ -253,8 +257,8 @@ const AttributeBinding = {
         curSpeech() {
             let word = this.words[this.curIndex]
             let prefix = 'https://dict.youdao.com/dictvoice?word='
-            let uk = prefix + word.ukspeech
-            let us = prefix + word.usspeech
+            let uk = prefix + word.json.ukspeech
+            let us = prefix + word.json.usspeech
 
             return {
                 uk: uk,
@@ -264,9 +268,11 @@ const AttributeBinding = {
     },
 
     created() {
-        
+
         let jsonStr = localStorage.getItem("user")
         this.user = JSON.parse(jsonStr)
+
+        // this.user = {id:17, mail:"877669110@qq.com", phone:"13553285743", nickName:"moonlight"}
 
         this.load()
     },

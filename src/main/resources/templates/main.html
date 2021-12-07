@@ -5,38 +5,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bs4.pop.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+    <script src="/js/bs4.pop.js"></script>
     <title>懂生词</title>
 </head>
 <body id="app" class="vh-100">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="/main">首页</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">复习</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">统计</a>
-          </li>
-		  <li class="nav-item">
-            <a class="nav-link" href="#">单词书</a>
-          </li>
-		  <li class="nav-item">
-            <a class="nav-link" href="#">设置</a>
-          </li>
+    <nav class="navbar navbar-expand bg-dark navbar-dark">
+        <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item ">
+                <a class="nav-link active" href="/main">首页</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/review">复习</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/slides">幻灯片</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">统计</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">单词书</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/settings">设置</a>
+            </li>
         </ul>
+        <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
     </nav>
 
     <button type="button" class="btn border mr-5 mt-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
-    
+
     <!-- 搜索框 -->
-    <div class="shadow mx-auto w-25 mt-5">
+    <div class="shadow mx-auto w-25 mt-5" style="min-width: 300px;">
         <div class="input-group mb-3">
             <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词" aria-label="Recipient's username" aria-describedby="button-addon2">
             <div class="input-group-append">
@@ -45,7 +52,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto mt-5">
+    <div class="container mx-auto mt-5" v-if="status">
         <!-- 选单词书 -->
         <div class="card shadow" v-if="is_null" style=" min-height: 50vh;">
             <span class="mx-auto mt-5 text-center mb-5" style="font-size: 2rem;" >欢迎，使用懂生词！</span>
@@ -172,8 +179,8 @@
 
         <!-- 完成 -->
         <div class="card shadow" v-if="is_done" style=" min-height: 50vh;">
-            <span class="mx-auto mt-5 text-center mb-5" style="font-size: 2rem;" >今日任务已完成</span>
-            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="backHome">回到首页</button>
+            <span class="mx-auto mt-5 text-center mb-5" style="font-size: 2rem;" >温故而知新，去复习吧！</span>
+            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="toReview">去复习</button>
         </div>
     </div>
 

@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         //获取用户信息
         User user = userMapper.checkUser(account);
 
-        redisTemplate.opsForValue().setIfAbsent(user.getId() + ":todayNum", "0");
+//        redisTemplate.opsForValue().setIfAbsent(user.getId() + ":todayNum", "0");
 
         if (user == null || !PasswordUtils.match(pwd, user.getPwd())) {
             return null;

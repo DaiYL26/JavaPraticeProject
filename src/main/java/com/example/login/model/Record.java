@@ -14,6 +14,6 @@ import java.util.Date;
 public class Record {
     private Long userid;
     private Integer id;
-    private Date date;
+    private Date timestamp;
     private Integer dictID;
 }

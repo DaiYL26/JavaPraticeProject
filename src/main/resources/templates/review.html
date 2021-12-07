@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bs4.pop.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+    <script src="/js/bs4.pop.js"></script>
+    <title>懂生词</title>
+</head>
+<body id="app" class="vh-100">
+<nav class="navbar navbar-expand bg-dark navbar-dark">
+    <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item ">
+            <a class="nav-link" href="/main">首页</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="/review">复习</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/slides">幻灯片</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">统计</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#">单词书</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/settings">设置</a>
+        </li>
+    </ul>
+    <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+</nav>
+
+<button type="button" class="btn border mr-5 mt-2 mb-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
+
+<!-- 搜索框 -->
+<div class="shadow mx-auto w-25 mt-5" style="min-width: 300px;">
+    <div class="input-group mb-3">
+        <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词" aria-label="Recipient's username" aria-describedby="button-addon2">
+        <div class="input-group-append">
+            <button class="btn border-right border-bottom border-top" type="button" id="button-addon2" @click="doSearch">查找</button>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto mt-5">
+    <!-- 选单词书 -->
+    <div class="card shadow" v-if="is_null" style=" min-height: 50vh;">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <h1 class="mx-auto">暂时还没有学习记录哦</h1>
+            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="toLearn">去学习</button>
+        </div>
+    </div>
+
+    <!-- 首页 -->
+    <div class="card shadow" v-if="is_home" style=" min-height: 50vh;">
+        <div class="card-body d-flex flex-column justify-content-center">
+            <h1 class="mx-auto">今日需复习 {{status.count}} 个单词</h1>
+            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="starLreaning">{{ status.isDone ? '再来一组' : '开始复习'}}</button>
+        </div>
+    </div>
+
+    <!-- 单词记忆中 -->
+    <div class="card shadow" v-if="is_lreaning" style=" min-height: 50vh;">
+        <div class="card-body d-flex">
+            <div class="d-flex flex-column w-75 mt-3 mx-auto">
+                <div class="font-weight-bold mx-auto text-monospace text-center" style="font-size: 3rem;">
+                    {{curWord.json.word}}
+                    <br>
+                    <a class="font-italic font-weight-light mr-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(1)">
+                        UK: /{{curWord.json.ukphone}}/
+                        <audio id="ukAudio">
+                            <source :src="curSpeech.uk"/>
+                        </audio>
+                    </a>
+                    <a class="font-italic font-weight-light ml-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(2)">
+                        US: /{{curWord.json.usphone}}/
+                        <audio id="usAudio">
+                            <source :src="curSpeech.us"/>
+                        </audio>
+                    </a>
+                </div>
+                <button type="button" class="btn w-50 mt-5 mb-3 mx-auto btn-success btn-lg btn-block" @click="recognize(true)">认识</button>
+                <button type="button" class="btn w-50 mt-2 mx-auto btn-warning btn-lg btn-block" @click="recognize(false)">不认识</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 单词详细 -->
+    <div class="card shadow" v-if="is_detail" style=" min-height: 50vh;">
+        <div class="card-body d-flex">
+            <div class="d-flex flex-column w-75 mx-auto">
+                <div class="font-weight-bold mx-auto text-monospace text-center" style="font-size: 2rem;">
+                    {{curWord.json.word}}
+                    <br>
+                    <a class="font-italic font-weight-light mr-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(1)">
+                        UK: /{{curWord.json.ukphone}}/
+                    </a>
+                    <a class="font-italic font-weight-light ml-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(2)">
+                        US: /{{curWord.json.usphone}}/
+                    </a>
+                </div>
+                <div class="mx-auto font-weight-bold alert alert-success .text-wrap" v-for="(item, index) in curWord.json.trans" :key="index">
+                    <span>{{item.pos + '. ' + item.tranCn + '&nbsp;&nbsp;' +'(' + item.tranOther + ') '}}</span>
+                </div>
+                <div class="mx-auto">
+                    <div class="mx-auto font-weight-normal alert alert-info .text-wrap">
+                            <span v-for="(item, index) in curWord.json.sentences" :key="index">例句{{index + 1}}{{'：' + item.sContent + '&nbsp;&nbsp;' + item.sCn}}
+                                <br v-if="index != curWord.json.sentences.length">
+                            </span>
+                    </div>
+                </div>
+                <div class="mx-auto font-weight-normal alert alert-dark .text-wrap" v-if="curWord.json.remMethod.val">
+                    <span>{{'记忆方法：' + curWord.json.remMethod.val}}</span>
+                </div>
+                <div class="mx-auto alert alert-primary .text-wrap" v-if="curWord.json.comm.length">
+                        <span v-for="(item, index) in curWord.json.comm" :key="index">同根词{{index + 1}}{{'：' + item.pos + '.&nbsp;' + item.words[0].hwd + '&nbsp;' + item.words[0].tran}}
+                            <br v-if="index != curWord.json.comm.length">
+                        </span>
+                </div>
+                <button type="button" class="btn w-50 mx-auto btn-success btn-lg btn-block" @click="next">已学习</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 测试 -->
+    <div class="card shadow" v-if="is_test" style=" min-height: 50vh;">
+        <div class="card-body d-flex flex-column w-75 mx-auto">
+            <div class="mx-auto font-weight-normal">
+                <span :class="{'alert': is_invaild , 'alert-warning': is_invaild}" style="font-size: 2rem;" v-if="!isConfirm">{{testInfo}}</span>
+                <span style="font-size: 2rem;" v-else>{{curWord.json.word}}</span>
+            </div>
+            <div class="input-group  mx-auto mb-3 mt-5 w-25">
+                <input type="text" v-model="speelWord" class="form-control" placeholder="请输入正确的拼写" aria-label="Recipient's username" aria-describedby="button-addon2">
+            </div>
+            <div class="mx-auto text-monospace text-center" style="font-size: 2rem;">
+                <a class="font-italic font-weight-light mr-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(1)">
+                    UK: /{{curWord.json.ukphone}}/
+                </a>
+                <a class="font-italic font-weight-light ml-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(2)">
+                    US: /{{curWord.json.usphone}}/
+                </a>
+            </div>
+            <div class="mx-auto font-weight-bold alert alert-success .text-wrap" v-for="(item, index) in curWord.json.trans" :key="index">
+                <span>{{item.pos + '. ' + item.tranCn + '&nbsp;&nbsp;' +'(' + item.tranOther + ') '}}</span>
+            </div>
+            <button type="button" class="btn w-50 mx-auto btn-success btn-lg btn-block" @click="testConfirm">确定</button>
+        </div>
+    </div>
+
+    <!-- 完成 -->
+    <div class="card shadow" v-if="is_done" style=" min-height: 50vh;">
+        <span class="mx-auto mt-5 text-center mb-5" style="font-size: 2rem;" >今日任务已完成</span>
+        <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="backHome">回到首页</button>
+    </div>
+</div>
+
+<audio id="wordAudio" src=""></audio>
+
+<!-- 查单词的框 -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title text-center">查询结果</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body" style="min-height: 60vh;">
+                <div v-if="!searchRes">
+                    <span>没有搜索到结果，请检查输入的是否为单词</span>
+                </div>
+                <div v-else-if="!searchRes.length" class="mx-auto w-100">
+                    <div class="mx-auto font-weight-bold text-center d-flex flex-column" style="font-size: 2rem;">
+                        <div>{{searchRes.word}}</div>
+                        <div class="text-center font-italic font-weight-light" style="font-size: 1rem;">
+                            读音：
+                            <a class="mx-auto  ml-3" style="font-size: 1rem; cursor: pointer;" @click="playAudio(3)">
+                                /{{searchRes.phonetic}}/
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="alert alert-info mt-2">definiton：{{searchRes.definition}}</p>
+                    <p class="alert alert-success">释义：{{searchRes.translation}}</p>
+                    <p class="alert alert-primary">{{searchWordExchange}}</p>
+                </div>
+                <div v-else-if="searchRes.length">
+                    <div class="alert alert-success" v-for="(item, index) in searchRes" :key="index">
+                        <p>{{item.word}}</p>
+                        <p>{{item.translation}}</p>
+                    </div>
+                </div>
+                <div v-else>
+                    网络出错了
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="js/review.js"></script>
+
+</html>

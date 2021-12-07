@@ -34,4 +34,13 @@ public interface LearnService {
      */
     Integer getHadLearnToday(Long userid);
 
+
+    /**
+     * 轮播英语单词
+     * @param userid
+     * @param count
+     * @return
+     */
+    Result getRandomWords(Long userid, Integer count);
+
 }

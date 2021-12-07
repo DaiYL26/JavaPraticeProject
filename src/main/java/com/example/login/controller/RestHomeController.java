@@ -5,6 +5,7 @@ import com.example.login.service.LearnService;
 import com.example.login.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,12 @@ public class RestHomeController {
     @PostMapping("/setPlanStatus")
     public void setPlanStatus(Long userid) {
         learnService.setPlanStatus(userid);
+    }
+
+    @CrossOrigin
+    @PostMapping("/getSlides")
+    public Result getSlide(Long userid, Integer count) {
+        return learnService.getRandomWords(userid, count);
     }
 
 }

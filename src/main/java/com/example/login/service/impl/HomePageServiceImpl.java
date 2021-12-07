@@ -33,6 +33,12 @@ public class HomePageServiceImpl implements HomePageService {
         HomePageVo homePageVo = new HomePageVo();
         String isDone = redisTemplate.opsForValue().get(String.valueOf(userid) + ":isDone");
         String todayNum = redisTemplate.opsForValue().get(String.valueOf(userid) + ":todayNum");
+        if (todayNum == null) {
+//            redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayNum", "0");
+//            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", )
+//            redisTemplate
+            todayNum = "0";
+        }
         Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCur", 1));
         if (plan == null) {
             return Result.success(null);
