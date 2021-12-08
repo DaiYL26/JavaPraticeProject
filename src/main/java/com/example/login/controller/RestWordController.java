@@ -1,5 +1,6 @@
 package com.example.login.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.model.Word;
 import com.example.login.service.SearchService;
 import com.example.login.vo.Result;
@@ -13,11 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+@SaCheckLogin
 @RestController
 public class RestWordController {
 
-    @Autowired
-    private SearchService searchService;
+    private final SearchService searchService;
+
+    public RestWordController(SearchService searchService) {
+        this.searchService = searchService;
+    }
 
 
     @PostMapping("/query/en")

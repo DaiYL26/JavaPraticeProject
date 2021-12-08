@@ -17,7 +17,7 @@ const AttributeBinding = {
             is_done: false,
             is_null: false,
 
-            status,
+            status: {},
             // todayNum: 3,
             // hadNum: 0,
             // totalNum: 3550,
@@ -31,7 +31,12 @@ const AttributeBinding = {
     },
     methods: {
         logout() {
-            $(location).attr('href', '/')
+            $.get("api/logout", function (res) {
+                if (res == true) {
+                    localStorage.removeItem("user")
+                    $(location).attr('href', '/')
+                }
+            })
         },
         // 搜索
         doSearch() {
@@ -91,7 +96,7 @@ const AttributeBinding = {
         },
         // 回到首页
         toReview() {
-            $(location).attr('href', '/review')
+            $(location).attr('href', '/books')
         },
         // 拼写确认
         testConfirm() {
@@ -204,7 +209,7 @@ const AttributeBinding = {
             })
         },
 
-        async load() {
+        load() {
             let that = this
             $.post("/home/getStatus", {
                 userid: that.user.id
@@ -212,9 +217,12 @@ const AttributeBinding = {
                 if (res.code == 200) {
                     console.log(res.data)
                     let status = res.data
+                    console.log(res.data);
                     if (status == null) {
                         that.is_home = false
                         that.is_null = true
+                        
+                        return
                     }
                     that.status = status
 
@@ -229,6 +237,9 @@ const AttributeBinding = {
         }
     },
     computed: {
+        imgUrl() {
+            return "/images/book/book" + this.status.dictID + ".png"
+        },
         curWord() {
             if (this.words === null) {
                 return ''

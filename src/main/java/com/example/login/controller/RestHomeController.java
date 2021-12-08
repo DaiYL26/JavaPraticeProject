@@ -1,5 +1,6 @@
 package com.example.login.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.service.HomePageService;
 import com.example.login.service.LearnService;
 import com.example.login.vo.Result;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
+@SaCheckLogin
 @RestController
 @RequestMapping("/home")
 public class RestHomeController {

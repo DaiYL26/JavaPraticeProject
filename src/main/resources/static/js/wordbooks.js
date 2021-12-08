@@ -1,19 +1,18 @@
-const AttributeBinding = {
+const Attribute = {
     data() {
         return {
             user: null,
-            words: [],
-            curIndex: 0,
+
+            curSelectedCnt: 20,
+            curSelectedBook: 1,
+
+            books: [],
 
             searchInput: null,
             searchRes: null,
 
-            isPlay: true,
-            timer: '',
-
-            delay: 5000,
-
-            status,
+            curPlan: '',
+            cnts: [5, 10, 15, 20, 25, 30, 50]
         }
     },
     methods: {
@@ -26,7 +25,7 @@ const AttributeBinding = {
                 return
             if (isletter.test(this.searchInput)) {
                 console.log('query/en')
-                $.post("/query/en",{
+                $.post("/query/en", {
                     word: that.searchInput
                 }, function (res) {
                     console.log(res)
@@ -35,7 +34,7 @@ const AttributeBinding = {
                     $('#myModal').modal()
                 })
             } else {
-                $.post("/query/zh",{
+                $.post("/query/zh", {
                     mean: that.searchInput, limit: 5
                 }, function (res) {
                     console.log(res)
@@ -45,38 +44,12 @@ const AttributeBinding = {
                 })
             }
         },
-        logout() {
-            $.get("api/logout", function (res) {
-                if (res == true) {
-                    localStorage.removeItem("user")
-                    $(location).attr('href', '/')
-                }
-            })
-        },
-        setDelay(num) {
-            this.delay = num * 1000
-        },
-        startSildes(isPlaying) {
-            let that = this
-            console.log(isPlaying);
-            if (isPlaying) {
-                this.isPlay = false
-                clearInterval(this.timer)
-                console.log('clear');
-                $('#btnDelay').attr("disabled",false)
-            } else {
-                this.timer = setInterval(function () {
-                    that.curIndex ++;
-                    if (that.curIndex == 10) {
-                        that.words = []
-                        that.curIndex = 0
-                        that.getWords(that.user.id, 10)
-                    }
-                }, that.delay)
-                this.isPlay = true
-                console.log('start');
-                $('#btnDelay').attr("disabled",true)
-            }
+
+        open(dictID) {
+            this.curSelectedBook = dictID
+            console.log(this.curSelectedBook)
+
+            // $('#myModal1').modal()
         },
         playAudio(isUK) {
             let wordAudio = $('#wordAudio')[0]
@@ -95,38 +68,63 @@ const AttributeBinding = {
             }
         },
 
-        getWords(userid,  count) {
+        updateBook() {
             let that = this
-            console.log(userid, count)
-            $.post("/home/getSlides", {
-                userid: userid,
-                count: count
+            $.post("/book/updateBook", {
+                userid: that.user.id,
+                dictID: that.curSelectedBook,
+                studyWord: that.curSelectedCnt
             }, function (res) {
                 console.log(res)
                 if (res.code == 200) {
-                    for (let i = 0; i < res.data.length; i ++) {
-                        let word = JSON.parse(res.data[i])
-                        // console.log(word)
-                        that.words.push(word)
-                    }
-                    console.log(that.words);
-                    if (that.timer == '')
-                        that.startSildes(false);
+                    bs4pop.notice( res.data, {position: 'topcenter', type: 'success'} )
+                    $('#myModal1').modal('hide')
+                    that.getCurPlan()
+                } else {
+                    bs4pop.notice( res.msg, {position: 'topcenter', type: 'warning'} )
                 }
             })
         },
 
-        load() {
-            this.getWords(this.user.id, 10);
+        logout() {
+            $.get("api/logout", function (res) {
+                if (res == true) {
+                    localStorage.removeItem("user")
+                    $(location).attr('href', '/')
+                }
+            })
+        },
+
+        getCurPlan() {
+            let that = this
+            $.post("/book/getPlans", {
+                userid: that.user.id
+            }, function (res) {
+                if (res.code == 200) {
+                    that.curPlan = res.data
+                }
+            })
+        },
+
+        getStatus() {
+            let that = this
+            $.post("/book/getBooks", {
+
+            }, function (res) {
+                if (res.code == 200) {
+                    that.books = res.data
+                    for (let i = 0; i < that.books.length; i ++) {
+                        that.books[i].imgUrl = '/images/book/book' + that.books[i].dictID + '.png'
+                    }
+                    console.log(that.books)
+                } else {
+                    bs4pop.notice( res.msg, {position: 'topcenter', type: 'warning'} )
+                }
+            })
         }
     },
+
     computed: {
-        curWord() {
-            if (this.words.length == 0) {
-                return {word: '', remMethod: {val: ''}, sentences: [], comm: []}
-            }
-            return this.words[this.curIndex]
-        },
         searchWordExchange() {
             let arr = this.searchRes.exchange.split('/')
             let res = ''
@@ -158,16 +156,13 @@ const AttributeBinding = {
             }
         }
     },
-
     created() {
-
         let jsonStr = localStorage.getItem("user")
         this.user = JSON.parse(jsonStr)
-
-        // this.user = {id:16, mail:"877669110@qq.com", phone:"13553285743", nickName:"moonlight"}
-
-        this.load()
+        // this.user = { id: 16, mail: "877669110@qq.com", phone: "13553285743", nickName: "moonlight" }
+        // this.username = this.user.nickName
+        this.getStatus()
+        this.getCurPlan()
     },
 }
-
-Vue.createApp(AttributeBinding).mount('#app')
+Vue.createApp(Attribute).mount('#app')

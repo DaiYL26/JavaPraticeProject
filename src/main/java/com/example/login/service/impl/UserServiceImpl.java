@@ -1,8 +1,10 @@
 package com.example.login.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.login.dao.UserInfoMapper;
 import com.example.login.dao.UserMapper;
 import com.example.login.model.User;
+import com.example.login.model.UserInfo;
 import com.example.login.service.MailService;
 import com.example.login.service.UserService;
 import com.example.login.utils.PasswordUtils;
@@ -11,9 +13,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final MailService mailService;
@@ -22,10 +26,13 @@ public class UserServiceImpl implements UserService {
 
     private final StringRedisTemplate redisTemplate;
 
-    public UserServiceImpl(MailService mailService, UserMapper userMapper, StringRedisTemplate redisTemplate) {
+    private final UserInfoMapper userInfoMapper;
+
+    public UserServiceImpl(MailService mailService, UserMapper userMapper, StringRedisTemplate redisTemplate, UserInfoMapper userInfoMapper) {
         this.mailService = mailService;
         this.userMapper = userMapper;
         this.redisTemplate = redisTemplate;
+        this.userInfoMapper = userInfoMapper;
     }
 
     /**
@@ -81,6 +88,11 @@ public class UserServiceImpl implements UserService {
             registerPassword = PasswordUtils.getEncodePwd(registerPassword);
 
             int i = userMapper.registerAccount(registerMail, registerPhone, registerPassword, nickName);
+
+            if (i > 0) {
+                User user = userMapper.selectOne(new QueryWrapper<User>().eq("mail", registerMail).eq("phone", registerPhone));
+                int insert = userInfoMapper.insert(new UserInfo(user.getId(), null, 30));
+            }
 
             return i > 0;
         }

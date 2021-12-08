@@ -9,6 +9,7 @@ import com.example.login.utils.TimeUtils;
 import com.example.login.vo.Result;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,6 +90,7 @@ public class LearnServiceImpl implements LearnService {
     }
 
 
+    @Transactional
     @Override
     public Boolean addRecord(Long userid, Integer dictID, Integer id, Boolean isMem) {
 

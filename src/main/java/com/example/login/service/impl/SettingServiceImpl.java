@@ -8,6 +8,7 @@ import com.example.login.service.SettingService;
 import com.example.login.vo.Result;
 import com.example.login.vo.SettingPageVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SettingServiceImpl implements SettingService {
@@ -25,6 +26,7 @@ public class SettingServiceImpl implements SettingService {
     }
 
 
+    @Transactional
     @Override
     public Result updateRecord(Long userid, String username, Integer studyword, Integer reviewCnt)
     {
@@ -50,7 +52,7 @@ public class SettingServiceImpl implements SettingService {
         Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCur", 1));
 
         if (userInfo == null || plan == null) {
-            return Result.fail(500, "系统出错啦");
+            return Result.fail(500, "请先选择学习计划");
         }
         SettingPageVo settingPageVo = new SettingPageVo(plan.getCount(), userInfo.getReviewCnt());
 

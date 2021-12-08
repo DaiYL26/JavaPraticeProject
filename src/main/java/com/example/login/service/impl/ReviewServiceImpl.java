@@ -14,6 +14,7 @@ import com.example.login.vo.Result;
 import com.example.login.vo.ReviewWordVo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -127,6 +128,9 @@ public class ReviewServiceImpl implements ReviewService {
             ArrayList<ReviewWordVo> wordVos = getPrior(priors);
             List<Record> records = recordMapper.selectList(new QueryWrapper<Record>().eq("userid", userid)
                     .and(i -> i.ge("TO_DAYS(NOW()) - TO_DAYS(timestamp)", 1)).orderByDesc("timestamp").last("limit " + 2 * count));
+            if (records.size() == 0) {
+                return Result.success(records);
+            }
             ArrayList<ReviewWordVo> normal = getNormal(records, count - priors.size());
 
             wordVos.addAll(normal);
@@ -143,6 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
         redisTemplate.expireAt(String.valueOf(userid) + ":isReview", TimeUtils.getNextDayTimestamp());
     }
 
+    @Transactional
     @Override
     public void updatePriorWord(Long userid, Integer id, Integer dictID, Boolean isRight) {
         String reviewNum = redisTemplate.opsForValue().get(String.valueOf(userid) + ":todayReviewNum");

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+    </style>
+    <title>懂生词</title>
+</head>
+<body id="app" class="vh-100 text-monospace" background="/images/bg.png">
+    <nav class="navbar navbar-expand bg-dark navbar-dark">
+        <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item ">
+                <a class="nav-link" href="/main">首页</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/review">复习</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/slides">幻灯片</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/statistics">统计</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/books">单词书</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="/settings">设置</a>
+            </li>
+        </ul>
+        <span class="text-monospace mr-2 font-weight-light"
+            style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+    </nav>
+
+    <button type="button" class="btn  btn-light border mr-5 mt-2" id="logoutBtn" @click="logout"
+        style="float: right;">退出登录</button>
+
+    <!-- 搜索框 -->
+    <div class="shadow mx-auto w-25 mt-5">
+        <div class="input-group mb-3">
+            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词"
+                aria-label="Recipient's username" aria-describedby="button-addon2">
+            <div class="input-group-append">
+                <button class="btn border-right border-bottom border-top" type="button" id="button-addon2"
+                    @click="doSearch">查找</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-5">
+
+        <!-- 首页 -->
+        <div class="card shadow" style=" min-height: 60vh;">
+            <div class="mx-auto mt-5">
+                <button type="button" class="btn border mr-5" :class="{ 'btn-success' : curSelected == 7 }" @click="getStatistic(7)">近7天</button>
+                <button type="button" class="btn border" :class="{ 'btn-success' : curSelected == 30 }" @click="getStatistic(30)">近30天</button>
+                <button type="button" class="btn border ml-5" :class="{ 'btn-success' : curSelected == -1 }" @click="getStatistic(-1)">历史统计</button>
+            </div>
+            <div class="card-body d-flex">
+                <charts class="mx-auto w-75" :datas="datas" v-if="isRenderCharts"></charts>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="wordAudio" src=""></audio>
+
+    <!-- 查单词的框 -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title text-center">查询结果</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- 模态框主体 -->
+                <div class="modal-body" style="min-height: 60vh;">
+                    <div v-if="!searchRes">
+                        <span>没有搜索到结果，请检查输入的是否为单词</span>
+                    </div>
+                    <div v-else-if="!searchRes.length" class="mx-auto w-100">
+                        <div class="mx-auto font-weight-bold text-center d-flex flex-column" style="font-size: 2rem;">
+                            <div>{{searchRes.word}}</div>
+                            <div class="text-center font-italic font-weight-light" style="font-size: 1rem;">
+                                读音：
+                                <a class="mx-auto  ml-3" style="font-size: 1rem; cursor: pointer;"
+                                    @click="playAudio(3)">
+                                    /{{searchRes.phonetic}}/
+                                </a>
+                            </div>
+                        </div>
+
+                        <p class="alert alert-info mt-2">definiton：{{searchRes.definition}}</p>
+                        <p class="alert alert-success">释义：{{searchRes.translation}}</p>
+                        <p class="alert alert-primary">{{searchWordExchange}}</p>
+                    </div>
+                    <div v-else-if="searchRes.length">
+                        <div class="alert alert-success" v-for="(item, index) in searchRes" :key="index">
+                            <p>{{item.word}}</p>
+                            <p>{{item.translation}}</p>
+                        </div>
+                    </div>
+                    <div v-else>
+                        网络出错了
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/js/statistics.js"></script>
+
+</html>

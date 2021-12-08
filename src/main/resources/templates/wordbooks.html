@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+    <link rel="stylesheet" href="/css/bs4.pop.css">
+    <link rel="stylesheet" href="/css/books.css" >
+    <script src="/js/bs4.pop.js"></script>
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+    </style>
+    <title>懂生词</title>
+</head>
+<body id="app" class="vh-100 text-monospace" background="/images/bg.png">
+<audio id="wordAudio" src="" style="display: none;"></audio>
+<nav class="navbar navbar-expand bg-dark navbar-dark">
+    <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item ">
+            <a class="nav-link" href="/main">首页</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="/review">复习</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="/slides">幻灯片</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="/statistics">统计</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="/books">单词书</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="/settings">设置</a>
+        </li>
+    </ul>
+    <span class="text-monospace mr-2 font-weight-light"
+          style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+</nav>
+
+    <button type="button" class="btn btn-light border mr-5 mt-2" style="float: right;">退出登录</button>
+
+    <!-- 搜索框 -->
+    <div class="shadow mx-auto w-25 mt-5" style="min-width: 300px;">
+        <div class="input-group mb-3">
+            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <div class="input-group-append">
+              <button class="btn border-right border-bottom border-top" type="button" id="button-addon2" @click="doSearch">查找</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto mt-5">
+        <!-- 那个卡片里面 -->
+        <div class="card shadow" style=" min-height: 50vh;">
+            <div class="card-body d-flex flex-column">
+                <h3 class="mx-auto mb-2 text-monospace font-weight-light">{{curPlan}}</h3>
+                <div class="container">
+
+                    <div class="index">
+                        <h3 class="text-monospace" style="font-weight: bold">可学习的单词书</h3>
+                        <!--                        <p style="padding-top: 15px" id="getbook">现在正在学习的单词书为：</p>-->
+                        <div class="index1 row d-flex">
+                            <div class="index2 col-4" v-for="(item, index) in books" :key="index">
+                                <img :src="item.imgUrl" alt="">
+                                <div class="index3">
+                                    <p class="index_name">{{item.dictName}}</p>
+                                    <div data-toggle="modal" data-target="#myModal1">
+                                        <div class="index_handleBox">
+                                            <button type="button" class="index_handle" id="book1" @click="open(item.dictID)">学习此书</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                    <!--                    设置对应学习量弹窗-->
+                    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">
+                                        设置每天任务量
+                                    </h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <label>每日学习单词量:</label>
+                                    <select class="form-control" v-model="curSelectedCnt">
+                                        <option v-for="(item, index) in cnts" :key="index" >{{item}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">
+                                        取消
+                                    </button>
+                                    <button type="button" class="btn btn-info" @click="updateBook">
+                                        确认
+                                    </button>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查单词的框 -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+            <h4 class="modal-title text-center">查询结果</h4>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- 模态框主体 -->
+            <div class="modal-body" style="min-height: 60vh;">
+                <div v-if="!searchRes">
+                    <span>没有搜索到结果，请检查输入的是否为单词</span>
+                </div>
+                <div v-else-if="!searchRes.length" class="mx-auto w-100">
+                    <div class="mx-auto font-weight-bold text-center d-flex flex-column" style="font-size: 2rem;">
+                        <div>{{searchRes.word}}</div>
+                        <div class="text-center font-italic font-weight-light" style="font-size: 1rem;">
+                            读音：
+                            <a class="mx-auto  ml-3" style="font-size: 1rem; cursor: pointer;" @click="playAudio(3)">
+                                /{{searchRes.phonetic}}/
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <p class="alert alert-info mt-2">definiton：{{searchRes.definition}}</p>
+                    <p class="alert alert-success">释义：{{searchRes.translation}}</p>
+                    <p class="alert alert-primary">{{searchWordExchange}}</p>
+                </div>
+                <div v-else-if="searchRes.length">
+                    <div class="alert alert-success" v-for="(item, index) in searchRes" :key="index">
+                        <p>{{item.word}}</p>
+                        <p>{{item.translation}}</p>
+                    </div>
+                </div>
+                <div v-else>
+                    网络出错了
+                </div>
+            </div>
+    
+        </div>
+    </div>
+    </div>
+</div>
+</body>
+
+<script src="/js/wordbooks.js"></script>
+
+</html>

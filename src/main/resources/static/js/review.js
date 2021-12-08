@@ -35,7 +35,12 @@ const AttributeBinding = {
         },
         logout() {
             // $.post()
-            $(location).attr('href', '/')
+            $.get("api/logout", function (res) {
+                if (res == true) {
+                    localStorage.removeItem("user")
+                    $(location).attr('href', '/')
+                }
+            })
         },
         // 搜索
         doSearch() {
@@ -194,6 +199,10 @@ const AttributeBinding = {
             }, function (res) {
                 console.log(res)
                 if (res.code == 200) {
+                    if (res.data.length == 0) {
+                        that.is_home = false
+                        that.is_null = true
+                    }
                     for (let i = 0; i < res.data.length; i ++) {
                         let word = JSON.parse(res.data[i].json)
                         res.data[i].json = word
@@ -213,9 +222,10 @@ const AttributeBinding = {
                 if (res.code == 200) {
                     console.log(res.data)
                     let status = res.data
-                    if (status.isNotPlan) {
+                    if (status.isNotPlan || status.isNotMen) {
                         that.is_home = false
                         that.is_null = true
+                        return
                     }
                     that.status = status
 

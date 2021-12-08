@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInt
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Map;
 
 @Configuration
+@EnableTransactionManagement
 @MapperScan("com.example.login.dao")
 public class MybatisPlusConfig {
     @Bean

@@ -12,9 +12,15 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
     <script src="/js/bs4.pop.js"></script>
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+    </style>
     <title>懂生词</title>
 </head>
-<body id="app" class="vh-100">
+<body id="app" class="vh-100 text-monospace" background="/images/bg.png">
 <nav class="navbar navbar-expand bg-dark navbar-dark">
     <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
     <ul class="navbar-nav mx-auto">
@@ -24,23 +30,24 @@
         <li class="nav-item active">
             <a class="nav-link" href="/review">复习</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item ">
             <a class="nav-link" href="/slides">幻灯片</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">统计</a>
+            <a class="nav-link" href="/statistics">统计</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">单词书</a>
+            <a class="nav-link" href="/books">单词书</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item ">
             <a class="nav-link" href="/settings">设置</a>
         </li>
     </ul>
-    <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+    <span class="text-monospace mr-2 font-weight-light"
+          style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
 </nav>
 
-<button type="button" class="btn border mr-5 mt-2 mb-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
+<button type="button" class="btn  btn-light border mr-5 mt-2 mb-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
 
 <!-- 搜索框 -->
 <div class="shadow mx-auto w-25 mt-5" style="min-width: 300px;">
@@ -56,7 +63,7 @@
     <!-- 选单词书 -->
     <div class="card shadow" v-if="is_null" style=" min-height: 50vh;">
         <div class="card-body d-flex flex-column justify-content-center">
-            <h1 class="mx-auto">暂时还没有学习记录哦</h1>
+            <h1 class="mx-auto">暂时还没有超过一天的学习记录哦</h1>
             <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="toLearn">去学习</button>
         </div>
     </div>

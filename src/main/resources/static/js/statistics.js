@@ -2,21 +2,37 @@ const AttributeBinding = {
     data() {
         return {
             user: null,
-            words: [],
-            curIndex: 0,
 
             searchInput: null,
             searchRes: null,
 
-            isPlay: true,
-            timer: '',
+            isRenderCharts: false,
+            curSelected: 7,
 
-            delay: 5000,
+            datas: {}
 
-            status,
         }
     },
     methods: {
+        logout() {
+            $.get("api/logout", function (res) {
+                if (res == true) {
+                    localStorage.removeItem("user")
+                    $(location).attr('href', '/')
+                }
+            })
+        },
+        getStatistic(days) {
+
+            this.isRenderCharts = false
+            this.datas.days = days
+            this.datas.userid = this.user.id
+            this.curSelected = days
+            let that = this
+            setTimeout(function () {
+                that.isRenderCharts = true
+            }, 200)
+        },
         // 搜索
         doSearch() {
             let isletter = /^[a-zA-Z]+$/
@@ -26,7 +42,7 @@ const AttributeBinding = {
                 return
             if (isletter.test(this.searchInput)) {
                 console.log('query/en')
-                $.post("/query/en",{
+                $.post("/query/en", {
                     word: that.searchInput
                 }, function (res) {
                     console.log(res)
@@ -35,7 +51,7 @@ const AttributeBinding = {
                     $('#myModal').modal()
                 })
             } else {
-                $.post("/query/zh",{
+                $.post("/query/zh", {
                     mean: that.searchInput, limit: 5
                 }, function (res) {
                     console.log(res)
@@ -45,92 +61,35 @@ const AttributeBinding = {
                 })
             }
         },
-        logout() {
-            $.get("api/logout", function (res) {
-                if (res == true) {
-                    localStorage.removeItem("user")
-                    $(location).attr('href', '/')
-                }
-            })
-        },
-        setDelay(num) {
-            this.delay = num * 1000
-        },
-        startSildes(isPlaying) {
-            let that = this
-            console.log(isPlaying);
-            if (isPlaying) {
-                this.isPlay = false
-                clearInterval(this.timer)
-                console.log('clear');
-                $('#btnDelay').attr("disabled",false)
-            } else {
-                this.timer = setInterval(function () {
-                    that.curIndex ++;
-                    if (that.curIndex == 10) {
-                        that.words = []
-                        that.curIndex = 0
-                        that.getWords(that.user.id, 10)
-                    }
-                }, that.delay)
-                this.isPlay = true
-                console.log('start');
-                $('#btnDelay').attr("disabled",true)
-            }
-        },
+        // 拼写确认
+
         playAudio(isUK) {
             let wordAudio = $('#wordAudio')[0]
             if (isUK == 1) {
                 wordAudio.src = this.curSpeech.uk
                 wordAudio.load()
                 wordAudio.play()
-            } else if(isUK == 2) {
+            } else if (isUK == 2) {
                 wordAudio.src = this.curSpeech.us
                 wordAudio.load()
                 wordAudio.play()
-            } else if(isUK == 3) {
+            } else if (isUK == 3) {
                 wordAudio.src = 'https://dict.youdao.com/dictvoice?word=' + this.searchRes.word + '&type=1'
                 wordAudio.load()
                 wordAudio.play()
             }
         },
 
-        getWords(userid,  count) {
-            let that = this
-            console.log(userid, count)
-            $.post("/home/getSlides", {
-                userid: userid,
-                count: count
-            }, function (res) {
-                console.log(res)
-                if (res.code == 200) {
-                    for (let i = 0; i < res.data.length; i ++) {
-                        let word = JSON.parse(res.data[i])
-                        // console.log(word)
-                        that.words.push(word)
-                    }
-                    console.log(that.words);
-                    if (that.timer == '')
-                        that.startSildes(false);
-                }
-            })
-        },
-
         load() {
-            this.getWords(this.user.id, 10);
+
+            this.getStatistic(7);
         }
     },
     computed: {
-        curWord() {
-            if (this.words.length == 0) {
-                return {word: '', remMethod: {val: ''}, sentences: [], comm: []}
-            }
-            return this.words[this.curIndex]
-        },
         searchWordExchange() {
             let arr = this.searchRes.exchange.split('/')
             let res = ''
-            for (let i = 0; i < arr.length; i ++) {
+            for (let i = 0; i < arr.length; i++) {
                 arr[i] = arr[i].replace(/p:/, '过去式：')
                 arr[i] = arr[i].replace(/d:/, '过去分词：')
                 arr[i] = arr[i].replace(/i:/, '现在分词：')
@@ -143,10 +102,6 @@ const AttributeBinding = {
             return res
         },
         curSpeech() {
-
-            if (this.words.length == 0)
-                return
-
             let word = this.words[this.curIndex]
             let prefix = 'https://dict.youdao.com/dictvoice?word='
             let uk = prefix + word.ukspeech
@@ -164,10 +119,48 @@ const AttributeBinding = {
         let jsonStr = localStorage.getItem("user")
         this.user = JSON.parse(jsonStr)
 
-        // this.user = {id:16, mail:"877669110@qq.com", phone:"13553285743", nickName:"moonlight"}
-
         this.load()
     },
 }
 
-Vue.createApp(AttributeBinding).mount('#app')
+const app = Vue.createApp(AttributeBinding)
+app.component('charts', {
+    props: ['datas'],
+    template: `
+        <div id="main"></div>
+        `,
+    mounted() {
+        this.myChart = echarts.init(document.getElementById('main'))
+
+        let that = this
+
+        $.post("/statistic/getRecentData", {
+            userid: that.datas.userid,
+            days: that.datas.days
+        }, function (res) {
+            that.myChart.setOption({
+                color: ['#28a745', '#FF6347'],
+                series: [
+                    {
+                        name: '统计',
+                        type: 'pie',
+                        radius: '55%',
+                        label: {
+                            normal: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: 18
+                                },
+                                formatter: '{b}: {c} ({d}%)'
+                            }
+                        },
+                        data: res.data
+                    }
+                ]
+            })
+        })
+
+    }
+})
+
+app.mount('#app')

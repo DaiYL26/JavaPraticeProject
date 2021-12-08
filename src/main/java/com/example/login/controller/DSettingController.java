@@ -1,10 +1,11 @@
 package com.example.login.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.service.SettingService;
 import com.example.login.vo.Result;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+@SaCheckLogin
 @RestController
 @RequestMapping("/setting")
 public class DSettingController {

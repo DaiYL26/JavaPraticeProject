@@ -1,6 +1,7 @@
 package com.example.login.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.service.ReviewPageService;
 import com.example.login.service.ReviewService;
 import com.example.login.vo.Result;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin
+@SaCheckLogin
 @RestController
 @RequestMapping("/Review")
 public class RestReviewController {

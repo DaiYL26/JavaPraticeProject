@@ -12,9 +12,15 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
     <script src="/js/bs4.pop.js"></script>
+    <style>
+        body {
+            background-repeat: no-repeat;
+            background-size: 100%;
+        }
+    </style>
     <title>懂生词</title>
 </head>
-<body id="app" class="vh-100">
+<body id="app" class="vh-100 text-monospace" background="/images/bg.png">
 <nav class="navbar navbar-expand bg-dark navbar-dark">
     <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
     <ul class="navbar-nav mx-auto">
@@ -24,26 +30,27 @@
         <li class="nav-item ">
             <a class="nav-link" href="/review">复习</a>
         </li>
-        <li class="nav-item active">
-            <a class="nav-link" href="/slides">幻灯片</a>
+        <li class="nav-item ">
+            <a class="nav-link active" href="/slides">幻灯片</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">统计</a>
+            <a class="nav-link" href="/statistics">统计</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#">单词书</a>
+            <a class="nav-link" href="/books">单词书</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item ">
             <a class="nav-link" href="/settings">设置</a>
         </li>
     </ul>
-    <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+    <span class="text-monospace mr-2 font-weight-light"
+          style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
 </nav>
 
 
-<button type="button" class="btn border ml-3 mr-5 mt-2 mb-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
-<button type="button" class="btn btn-success border ml-3 mt-2 mb-2 mx-auto" id="logoutBtn" @click="startSildes(isPlay)" style="float: right;">{{isPlay ? '暂停播放' : '开始播放'}}</button>
-<button type="button" id="btnDelay" class="btn border dropdown-toggle mr-2 mt-2 mb-2" data-toggle="dropdown" style="float: right;">
+<button type="button" class="btn  btn-light border ml-3 mr-5 mt-2 mb-2"  @click="logout" style="float: right;">退出登录</button>
+<button type="button" class="btn  btn-success border ml-3 mt-2 mb-2 mx-auto"  @click="startSildes(isPlay)" style="float: right;">{{isPlay ? '暂停播放' : '开始播放'}}</button>
+<button type="button" id="btnDelay" class="btn  btn-light border dropdown-toggle mr-3 mt-2 mb-2" data-toggle="dropdown" style="float: right;">
     {{delay/1000}} 秒
 </button>
 <div class="dropdown-menu">

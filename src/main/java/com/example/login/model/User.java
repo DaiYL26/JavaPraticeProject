@@ -17,6 +17,5 @@ public class User {
 
     private String nickName;
 
-    private Long lastLogin;
 
 }

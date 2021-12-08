@@ -14,24 +14,39 @@ public class WebController {
         return "login";
     }
 
-//    @SaCheckLogin
+    @SaCheckLogin
     @GetMapping("/main")
     public String toMain() {
         return "main";
     }
 
+    @SaCheckLogin
     @GetMapping("/review")
     public String toReview() {
         return "review";
     }
 
+    @SaCheckLogin
     @GetMapping("/slides")
     public String toSlides() {
         return "slides";
     }
 
+    @SaCheckLogin
     @GetMapping("/settings")
     public String setting() {
         return "setting";
+    }
+
+    @SaCheckLogin
+    @GetMapping("/books")
+    public String toBooks() {
+        return "wordbooks";
+    }
+
+    @SaCheckLogin
+    @GetMapping("/statistics")
+    public String toStatistics() {
+        return "statistics";
     }
 }
