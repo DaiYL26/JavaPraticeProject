@@ -8,7 +8,7 @@ import lombok.Data;
 @TableName("dict")
 public class Dict {
     @TableId(value = "dictID")
-    private Integer dictID;
-    private String dictName;
-    private Integer totalNum;
+    private Integer dictID; //单词书id
+    private String dictName; //单词书名
+    private Integer totalNum; //单词书的词量总数
 }

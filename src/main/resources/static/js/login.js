@@ -295,5 +295,10 @@ $(document).ready(function () {
         })
     })
 
+    $.get("api/isLogin", function (res) {
+        if (res.data === true) {
+            $(location).attr("href", "/main")
+        }
+    })
 
 })

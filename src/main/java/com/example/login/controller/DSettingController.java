@@ -3,8 +3,10 @@ package com.example.login.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.service.SettingService;
 import com.example.login.vo.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @SaCheckLogin
 @RestController
 @RequestMapping("/setting")
@@ -26,6 +28,7 @@ public class DSettingController {
 
     @PostMapping("/getStatus")
     public Result getStatus(Long userid) {
+        log.info(userid + " at the page settings");
         return settingService.getSettingStatus(userid);
     }
 

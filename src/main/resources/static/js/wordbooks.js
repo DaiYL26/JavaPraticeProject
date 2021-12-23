@@ -24,22 +24,22 @@ const Attribute = {
             if (this.searchInput === null || this.searchInput.trim() == '')
                 return
             if (isletter.test(this.searchInput)) {
-                console.log('query/en')
+                // console.log('query/en')
                 $.post("/query/en", {
                     word: that.searchInput
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             } else {
                 $.post("/query/zh", {
                     mean: that.searchInput, limit: 5
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             }
@@ -47,7 +47,7 @@ const Attribute = {
 
         open(dictID) {
             this.curSelectedBook = dictID
-            console.log(this.curSelectedBook)
+            // console.log(this.curSelectedBook)
 
             // $('#myModal1').modal()
         },
@@ -75,7 +75,7 @@ const Attribute = {
                 dictID: that.curSelectedBook,
                 studyWord: that.curSelectedCnt
             }, function (res) {
-                console.log(res)
+                // console.log(res)
                 if (res.code == 200) {
                     bs4pop.notice( res.data, {position: 'topcenter', type: 'success'} )
                     $('#myModal1').modal('hide')
@@ -116,7 +116,7 @@ const Attribute = {
                     for (let i = 0; i < that.books.length; i ++) {
                         that.books[i].imgUrl = '/images/book/book' + that.books[i].dictID + '.png'
                     }
-                    console.log(that.books)
+                    // console.log(that.books)
                 } else {
                     bs4pop.notice( res.msg, {position: 'topcenter', type: 'warning'} )
                 }
@@ -166,3 +166,14 @@ const Attribute = {
     },
 }
 Vue.createApp(Attribute).mount('#app')
+
+
+let handler = setInterval(function () {
+    $.get("api/isLogin", function (res) {
+        if (res.data !== true) {
+            clearInterval(handler)
+            alert("您的账号已经在别处登录！")
+            $(location).attr("href", "/")
+        }
+    })
+}, 3000)

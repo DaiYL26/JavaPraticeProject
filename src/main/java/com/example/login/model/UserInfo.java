@@ -16,5 +16,6 @@ public class UserInfo {
     private Long userid;
     private String avatar;
     private Integer reviewCnt;
+    private Integer rankScore;
 
 }

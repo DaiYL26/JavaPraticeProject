@@ -7,6 +7,7 @@ import com.example.login.model.Plan;
 import com.example.login.service.LearnService;
 import com.example.login.utils.TimeUtils;
 import com.example.login.vo.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,20 +48,24 @@ public class LearnServiceImpl implements LearnService {
 
         String isDone = redisTemplate.opsForValue().get(String.valueOf(userid) + ":isDone");
 
-        if (isMore && isDone != null) {
-            Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCur", 1));
-            count = plan.getCount();
-            redisTemplate.opsForValue().setIfPresent(String.valueOf(userid) + ":todayNum", "0");
-        }
+//        if (isMore && isDone != null) {
+//            Plan plan = planMapper.selectOne(new QueryWrapper<Plan>().eq("userid", userid).eq("isCur", 1));
+//            count = plan.getCount();
+//            redisTemplate.opsForValue().setIfPresent(String.valueOf(userid) + ":todayNum", "0");
+//            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
+//        }
 
-        if (isDone == null) {
-            redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayNum", "0");
-            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
-        }
+//        String todayNum1 = redisTemplate.opsForValue().get(String.valueOf(userid) + ":todayNum");
+//
+//        if (isDone == null && todayNum1 == null) {
+//            redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayNum", "0");
+//            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
+//        }
 
-        System.out.println(userid + " " + dictID + " " + count + " " + hadMem + " " + isMore);
-
+//        System.out.println(userid + " " + dictID + " " + count + " " + hadMem + " " + isMore);
+//        log.info(new Date().toString() +  userid + " " + dictID + " " + count + " " + hadMem + " " + isMore);
         // 获取今日已学习数量
+        getHadLearnToday(userid);
 //        Integer todayNum = getHadLearnToday(userid);
 //        count -= todayNum;
 //        if (count < 0) {
@@ -110,6 +115,7 @@ public class LearnServiceImpl implements LearnService {
         Boolean aTrue = redisTemplate.opsForValue().setIfAbsent(String.valueOf(userid) + ":isDone", "true");
         redisTemplate.expireAt(String.valueOf(userid) + ":isDone", TimeUtils.getNextDayTimestamp());
         Boolean aBoolean = redisTemplate.opsForValue().setIfPresent(String.valueOf(userid) + ":todayNum", "0");
+        redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
 //        System.out.println(aTrue + " " + aBoolean);
 //        System.out.println("Mark Done");
     }
@@ -120,6 +126,7 @@ public class LearnServiceImpl implements LearnService {
         String todayNum = redisTemplate.opsForValue().get(String.valueOf(userid) + ":todayNum");
         if (todayNum == null) {
             redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayNum", "0");
+            redisTemplate.expireAt(String.valueOf(userid) + ":todayNum", TimeUtils.getNextDayTimestamp());
             todayNum = "0";
         }
         return Integer.parseInt(todayNum);

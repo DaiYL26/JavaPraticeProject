@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bs4.pop.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="/js/bs4.pop.js"></script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <style>
+        body {
+            background-size: 100%;
+        }
+    </style>
+    <title>懂生词</title>
+</head>
+<body id="app" class="vh-100 text-monospace" background="/images/bg.png">
+<nav class="navbar navbar-expand bg-dark navbar-dark">
+    <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item ">
+            <a class="nav-link active" href="/main">首页</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="/review">复习</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/slides">幻灯片</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/statistics">统计</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/game">对战</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/books">单词书</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/settings">设置</a>
+        </li>
+    </ul>
+    <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+</nav>
+
+<button type="button" class="btn  btn-light border mr-5 mt-2" id="logoutBtn" @click="logout" style="float: right;">退出登录</button>
+
+<div class=" w-50 mx-auto mt-5">
+    <div class=" mx-auto text-center">
+        <h3 v-if="!is_test">当前匹配积分: {{selfRank}}</h3>
+        <h3 v-if="is_test" id="timeHodler">对战剩余 60 秒</h3>
+    </div>
+
+</div>
+
+<div class="card shadow float-left ml-5" v-if="is_test || is_commit || is_ready" style="position: relative; top: 20%;">
+    <div class="card-body text-center">
+        <p>我方</p>
+        <p>{{user.nickName}}</p>
+        <p>匹配积分: {{selfRank}}</p>
+        <p>得分: {{selfScore}}</p>
+    </div>
+</div>
+<div class="card shadow float-right mr-5" v-if="is_test || is_commit || is_ready" style="position: relative; top: 20%;">
+    <div class="card-body text-center">
+        <p>敌方</p>
+        <p>{{opponent.name}}</p>
+        <p>匹配积分: {{opponent.rankScore}}</p>
+        <p>得分：{{opponent.score}}</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+
+    <!-- 开始匹配 -->
+    <div class="card shadow" v-if="is_begin" style=" min-height: 60vh;">
+        <div class="card-body d-flex flex-column justify-content-center w-75 mx-auto">
+            <button class="btn w-50 mx-auto btn-success btn-lg btn-block" @click="startMatching">开始匹配</button>
+        </div>
+    </div>
+
+    <!-- 匹配中 -->
+    <div class="card shadow" v-if="is_matching" style=" min-height: 60vh;">
+        <div class="card-body d-flex flex-column justify-content-center w-75 mx-auto">
+            <h3 class="text-center">正在寻找对手...</h3>
+            <div class="mx-auto mt-5 mb-5">
+                <div class="spinner-grow text-primary" role="status"></div>
+                <div class="spinner-grow text-success ml-5 mr-5" role="status"></div>
+                <div class="spinner-grow text-warning" role="status"></div>
+            </div>
+            <button class="btn w-50 mx-auto btn-success btn-lg btn-block" @click="cancelMatching">取消匹配</button>
+        </div>
+    </div>
+
+    <!-- 准备 -->
+    <div class="card shadow" v-if="is_ready" style=" min-height: 60vh;">
+        <div class="card-body d-flex flex-column justify-content-center w-75 mx-auto">
+            <h3 class="mx-auto">比赛马上开始...</h3>
+        </div>
+    </div>
+
+    <div class="card shadow" v-if="is_commit" style=" min-height: 60vh;">
+        <div class="card-body text-center d-flex flex-column justify-content-center w-75 mx-auto">
+            <h3 >比赛结束</h3>
+            <h3 v-if="selfScore != opponent.score">{{selfScore > opponent.score ? '您取得了胜利' : '对方取得了胜利'}}</h3>
+            <h3 v-else>平局！</h3>
+            <br>
+            <br>
+            <button type="button" class="btn w-50 mx-auto btn-success btn-lg" @click="toGame">重新匹配</button>
+        </div>
+    </div>
+
+    <!-- 测试 -->
+    <div class="card shadow" v-if="is_test" style=" min-height: 60vh;">
+        <div class="card-body d-flex flex-column w-75 mx-auto">
+            <div class="mx-auto font-weight-normal">
+                <span :class="{'alert': is_invaild , 'alert-warning': is_invaild}" style="font-size: 2rem;" v-if="!isConfirm">{{testInfo}}</span>
+                <span style="font-size: 2rem;" v-else>{{curWord.word}}</span>
+            </div>
+            <div class="input-group  mx-auto mb-3 mt-5 w-25">
+                <input type="text" v-model="speelWord" class="form-control" placeholder="请输入正确的拼写" aria-label="Recipient's username" aria-describedby="button-addon2">
+            </div>
+            <div class="mx-auto text-monospace text-center" style="font-size: 2rem;">
+                <a class="font-italic font-weight-light mr-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(1)">
+                    UK: /{{curWord.ukphone}}/
+                </a>
+                <a class="font-italic font-weight-light ml-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(2)">
+                    US: /{{curWord.usphone}}/
+                </a>
+            </div>
+            <div class="mx-auto font-weight-bold alert alert-success .text-wrap" v-for="(item, index) in curWord.trans" :key="index">
+                <span>{{item.pos + '. ' + item.tranCn + '&nbsp;&nbsp;' +'(' + item.tranOther + ') '}}</span>
+            </div>
+            <div class="w-100 d-flex justify-content-center">
+                <button type="button" v-show="curIndex != 0" class="btn  btn-light border" @click="next(-1)">上一个</button>
+                <button type="button" class="btn w-50 mx-auto btn-success btn-lg " @click="testConfirm">确定</button>
+                <button type="button" v-show="curIndex != words.length - 1"class="btn  btn-light border" @click="next(1)">下一个</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<audio id="wordAudio" src=""></audio>
+
+</body>
+
+    <script src="/js/game.js"></script>
+
+</html>

@@ -20,22 +20,22 @@ const Attribute = {
             if (this.searchInput === null || this.searchInput.trim() == '')
                 return
             if (isletter.test(this.searchInput)) {
-                console.log('query/en')
+                // console.log('query/en')
                 $.post("/query/en", {
                     word: that.searchInput
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             } else {
                 $.post("/query/zh", {
                     mean: that.searchInput, limit: 5
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             }
@@ -52,7 +52,7 @@ const Attribute = {
 
         Confirm() {
             let that = this
-            console.log(123);
+            // console.log(123);
             $.post("/setting/updateInfo", {
                 userid: that.user.id,
                 username: that.username,
@@ -60,7 +60,7 @@ const Attribute = {
                 reviewCnt: that.status.reviewCount
 
             }, function (res) {
-                console.log(res);
+                // console.log(res);
                 if(res.code == 200) {
                     that.user.nickName = that.username
                     localStorage.setItem("user", JSON.stringify(that.user))
@@ -143,3 +143,14 @@ const Attribute = {
     },
 }
 Vue.createApp(Attribute).mount('#app')
+
+
+let handler = setInterval(function () {
+    $.get("api/isLogin", function (res) {
+        if (res.data !== true) {
+            clearInterval(handler)
+            alert("您的账号已经在别处登录！")
+            $(location).attr("href", "/")
+        }
+    })
+}, 3000)

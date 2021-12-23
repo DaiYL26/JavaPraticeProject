@@ -6,6 +6,7 @@ import com.example.login.dao.UserInfoMapper;
 import com.example.login.model.Plan;
 import com.example.login.model.UserInfo;
 import com.example.login.service.ReviewPageService;
+import com.example.login.utils.TimeUtils;
 import com.example.login.vo.Result;
 import com.example.login.vo.ReviewPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,9 +62,15 @@ public class ReviewPageServiceImpl implements ReviewPageService {
 
         // 获取每天复习的计划
         UserInfo userInfo = userInfoMapper.selectById(userid);
-        System.out.println(userid);
-        System.out.println(userInfo);
-        reviewPageVo.setCount(userInfo.getReviewCnt() - Integer.parseInt(reviewNum));
+//        System.out.println(userid);
+//        System.out.println(userInfo);
+        int count = userInfo.getReviewCnt() - Integer.parseInt(reviewNum);
+        if (count <= 0) {
+            redisTemplate.opsForValue().set(String.valueOf(userid) + ":isReview", "true");
+            redisTemplate.expireAt(String.valueOf(userid) + ":isReview", TimeUtils.getNextDayTimestamp());
+            count = 0;
+        }
+        reviewPageVo.setCount(count);
 
         if (allMens.compareTo(userInfo.getReviewCnt()) < 0) {
             reviewPageVo.setCount(allMens);
@@ -72,6 +79,10 @@ public class ReviewPageServiceImpl implements ReviewPageService {
         // 今天计划是否已完成
         String isReview = redisTemplate.opsForValue().get(String.valueOf(userid) + ":isReview");
         reviewPageVo.setIsDone(isReview);
+
+        if (isReview != null && count == 0) {
+            reviewPageVo.setCount(userInfo.getReviewCnt());
+        }
 
         return Result.success(reviewPageVo);
     }

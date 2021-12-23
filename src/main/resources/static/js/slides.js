@@ -25,22 +25,22 @@ const AttributeBinding = {
             if (this.searchInput === null || this.searchInput.trim() == '')
                 return
             if (isletter.test(this.searchInput)) {
-                console.log('query/en')
+                // console.log('query/en')
                 $.post("/query/en",{
                     word: that.searchInput
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             } else {
                 $.post("/query/zh",{
                     mean: that.searchInput, limit: 5
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             }
@@ -58,11 +58,11 @@ const AttributeBinding = {
         },
         startSildes(isPlaying) {
             let that = this
-            console.log(isPlaying);
+            // console.log(isPlaying);
             if (isPlaying) {
                 this.isPlay = false
                 clearInterval(this.timer)
-                console.log('clear');
+                // console.log('clear');
                 $('#btnDelay').attr("disabled",false)
             } else {
                 this.timer = setInterval(function () {
@@ -74,7 +74,7 @@ const AttributeBinding = {
                     }
                 }, that.delay)
                 this.isPlay = true
-                console.log('start');
+                // console.log('start');
                 $('#btnDelay').attr("disabled",true)
             }
         },
@@ -97,19 +97,19 @@ const AttributeBinding = {
 
         getWords(userid,  count) {
             let that = this
-            console.log(userid, count)
+            // console.log(userid, count)
             $.post("/home/getSlides", {
                 userid: userid,
                 count: count
             }, function (res) {
-                console.log(res)
+                // console.log(res)
                 if (res.code == 200) {
                     for (let i = 0; i < res.data.length; i ++) {
                         let word = JSON.parse(res.data[i])
                         // console.log(word)
                         that.words.push(word)
                     }
-                    console.log(that.words);
+                    // console.log(that.words);
                     if (that.timer == '')
                         that.startSildes(false);
                 }
@@ -171,3 +171,13 @@ const AttributeBinding = {
 }
 
 Vue.createApp(AttributeBinding).mount('#app')
+
+let handler = setInterval(function () {
+    $.get("api/isLogin", function (res) {
+        if (res.data !== true) {
+            clearInterval(handler)
+            alert("您的账号已经在别处登录！")
+            $(location).attr("href", "/")
+        }
+    })
+}, 3000)

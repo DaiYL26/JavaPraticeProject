@@ -29,7 +29,7 @@ public class RestWordController {
     public Result query(String word) throws TException {
         System.out.println(word);
         String data = searchService.queryForEn(word);
-        System.out.println(data);
+//        System.out.println(data);
         return Result.success(data);
     }
 
@@ -38,7 +38,7 @@ public class RestWordController {
     public Result query(String mean, Integer limit) throws TException {
         System.out.println(mean);
         String data = searchService.queryForZh(mean, limit);
-        System.out.println(data);
+//        System.out.println(data);
         return Result.success(data);
     }
 

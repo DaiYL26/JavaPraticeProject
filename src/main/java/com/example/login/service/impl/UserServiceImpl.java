@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
             if (i > 0) {
                 User user = userMapper.selectOne(new QueryWrapper<User>().eq("mail", registerMail).eq("phone", registerPhone));
-                int insert = userInfoMapper.insert(new UserInfo(user.getId(), null, 30));
+                int insert = userInfoMapper.insert(new UserInfo(user.getId(), null, 30, 1000));
             }
 
             return i > 0;

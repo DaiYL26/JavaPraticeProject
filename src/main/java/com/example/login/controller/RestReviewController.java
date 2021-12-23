@@ -5,11 +5,15 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.example.login.service.ReviewPageService;
 import com.example.login.service.ReviewService;
 import com.example.login.vo.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
+@Slf4j
 @SaCheckLogin
 @RestController
 @RequestMapping("/Review")
@@ -31,6 +35,7 @@ public class RestReviewController {
 
     @PostMapping("/getStatus")
     public Result getReviewStatus(Long userid) {
+        log.info(userid + " at review page " + new Date().toString());
         return reviewPageService.getPageData(userid);
     }
 

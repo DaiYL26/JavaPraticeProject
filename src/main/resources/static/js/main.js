@@ -46,22 +46,22 @@ const AttributeBinding = {
             if (this.searchInput === null || this.searchInput.trim() == '')
                 return
             if (isletter.test(this.searchInput)) {
-                console.log('query/en')
+                // console.log('query/en')
                 $.post("/query/en",{
                     word: that.searchInput
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             } else {
                 $.post("/query/zh",{
                     mean: that.searchInput, limit: 5
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             }
@@ -96,6 +96,9 @@ const AttributeBinding = {
         },
         // 回到首页
         toReview() {
+            $(location).attr('href', '/review')
+        },
+        toBooks() {
             $(location).attr('href', '/books')
         },
         // 拼写确认
@@ -119,13 +122,13 @@ const AttributeBinding = {
 
             setTimeout(function () {
                 that.isConfirm = false
-                console.log(that.words[that.curIndex].word.trim())
+                // console.log(that.words[that.curIndex].word.trim())
                 if (that.speelWord.trim() === that.words[that.curIndex].word.trim()) {
                     console.log('正确')
 
                     // console.log(that.user.id, that.status.dictID, that.words[that.curIndex].wordRank);
 
-                    console.log(that.curIndex);
+                    // console.log(that.curIndex);
                     $.post("/home/addRecord", {
                         userid: that.user.id,
                         dictID: that.status.dictID,
@@ -133,7 +136,7 @@ const AttributeBinding = {
                         isMem: true
                     })
                     if (that.curIndex + 1 >= that.words.length) {
-                        console.log(that.curIndex, "++");
+                        // console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
                         $.post("/home/setPlanStatus", {
@@ -147,7 +150,7 @@ const AttributeBinding = {
 
                 } else {
                     console.log('拼写错误')
-                    console.log(that.curIndex);
+                    // console.log(that.curIndex);
                     $.post("/home/addRecord", {
                         userid: that.user.id,
                         dictID: that.status.dictID,
@@ -155,7 +158,7 @@ const AttributeBinding = {
                         isMem: false
                     })
                     if (that.curIndex + 1 >= that.words.length) {
-                        console.log(that.curIndex, "++");
+                        // console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
                         $.post("/home/setPlanStatus", {
@@ -197,14 +200,14 @@ const AttributeBinding = {
                 hadMem: hadMem,
                 isMore: isMore
             }, function (res) {
-                console.log(res)
+                // console.log(res)
                 if (res.code == 200) {
                     for (let i = 0; i < res.data.length; i ++) {
                         let word = JSON.parse(res.data[i])
                         // console.log(word)
                         that.words.push(word)
                     }
-                    console.log(that.words);
+                    // console.log(that.words);
                 }
             })
         },
@@ -215,9 +218,9 @@ const AttributeBinding = {
                 userid: that.user.id
             }, function (res) {
                 if (res.code == 200) {
-                    console.log(res.data)
+                    // console.log(res.data)
                     let status = res.data
-                    console.log(res.data);
+                    // console.log(res.data);
                     if (status == null) {
                         that.is_home = false
                         that.is_null = true
@@ -284,3 +287,13 @@ const AttributeBinding = {
 }
 
 Vue.createApp(AttributeBinding).mount('#app')
+
+let handler = setInterval(function () {
+    $.get("api/isLogin", function (res) {
+        if (res.data !== true) {
+            clearInterval(handler)
+            alert("您的账号已经在别处登录！")
+            $(location).attr("href", "/")
+        }
+    })
+}, 3000)

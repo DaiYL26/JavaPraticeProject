@@ -13,38 +13,39 @@
     <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
     <style>
         body {
-            background-repeat: no-repeat;
             background-size: 100%;
         }
     </style>
     <title>懂生词</title>
 </head>
 <body id="app" class="vh-100 text-monospace" background="/images/bg.png">
-    <nav class="navbar navbar-expand bg-dark navbar-dark">
-        <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
-        <ul class="navbar-nav mx-auto">
-            <li class="nav-item ">
-                <a class="nav-link" href="/main">首页</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="/review">复习</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="/slides">幻灯片</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="/statistics">统计</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/books">单词书</a>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link" href="/settings">设置</a>
-            </li>
-        </ul>
-        <span class="text-monospace mr-2 font-weight-light"
-            style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
-    </nav>
+<nav class="navbar navbar-expand bg-dark navbar-dark">
+    <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
+    <ul class="navbar-nav mx-auto">
+        <li class="nav-item ">
+            <a class="nav-link active" href="/main">首页</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="/review">复习</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/slides">幻灯片</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/statistics">统计</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/game">对战</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/books">单词书</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/settings">设置</a>
+        </li>
+    </ul>
+    <span class="text-monospace mr-2 font-weight-light" style="float: right; font-size: 1.2rem; color: gray;">{{user.nickName}}</span>
+</nav>
 
     <button type="button" class="btn  btn-light border mr-5 mt-2" id="logoutBtn" @click="logout"
         style="float: right;">退出登录</button>
@@ -52,7 +53,7 @@
     <!-- 搜索框 -->
     <div class="shadow mx-auto w-25 mt-5">
         <div class="input-group mb-3">
-            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词"
+            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词/中文释义"
                 aria-label="Recipient's username" aria-describedby="button-addon2">
             <div class="input-group-append">
                 <button class="btn border-right border-bottom border-top" type="button" id="button-addon2"

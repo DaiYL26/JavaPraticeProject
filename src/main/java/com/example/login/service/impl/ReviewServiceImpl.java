@@ -12,7 +12,9 @@ import com.example.login.service.ReviewService;
 import com.example.login.utils.TimeUtils;
 import com.example.login.vo.Result;
 import com.example.login.vo.ReviewWordVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
@@ -77,7 +80,7 @@ public class ReviewServiceImpl implements ReviewService {
         HashMap<Integer, List<Integer>> dict2ids = new HashMap<>();
         ArrayList<ReviewWordVo> wordVos = new ArrayList<>();
 
-        for (int i = 0; i < count; i ++) {
+        for (int i = 0; i < Math.min(count, records.size()); i ++) {
             Record record = records.get(i);
             if (!dict2ids.containsKey(record.getDictID())) {
                 dict2ids.put(record.getDictID(), new ArrayList<Integer>());
@@ -113,7 +116,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (todayNum == null) {
             redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayReviewNum", "0");
             redisTemplate.expireAt(String.valueOf(userid) + ":todayReviewNum", TimeUtils.getNextDayTimestamp());
-        } else {
+        } else if (!isMore){
             count -= Integer.parseInt(todayNum);
         }
 
@@ -145,6 +148,8 @@ public class ReviewServiceImpl implements ReviewService {
     public void setReviewStatus(Long userid) {
         redisTemplate.opsForValue().set(String.valueOf(userid) + ":isReview", "true");
         redisTemplate.expireAt(String.valueOf(userid) + ":isReview", TimeUtils.getNextDayTimestamp());
+        redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayReviewNum", "0");
+        redisTemplate.expireAt(String.valueOf(userid) + ":todayReviewNum", TimeUtils.getNextDayTimestamp());
     }
 
     @Transactional
@@ -155,15 +160,15 @@ public class ReviewServiceImpl implements ReviewService {
             reviewNum = "0";
         }
         redisTemplate.opsForValue().set(String.valueOf(userid) + ":todayReviewNum", String.valueOf(Integer.parseInt(reviewNum) + 1));
-
+        redisTemplate.expireAt(String.valueOf(userid) + ":todayReviewNum", TimeUtils.getNextDayTimestamp());
         if (isRight == false) {
             return;
         }
-
+        log.info(userid + " " + id + " " + dictID);
         ReviewPrior reviewPrior = reviewPriorMapper.selectOne(new QueryWrapper<ReviewPrior>().eq("userid", userid)
                 .eq("id", id).eq("dictID", dictID));
-
-        if (reviewPrior.getReviewCount() == 1) {
+        log.info("---------------- " + reviewPrior);
+        if (reviewPrior != null && reviewPrior.getReviewCount() == 1) {
             reviewPriorMapper.delete(new QueryWrapper<ReviewPrior>().eq("userid", userid)
                     .eq("id", id).eq("dictID", dictID));
 

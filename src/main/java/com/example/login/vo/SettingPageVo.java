@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class SettingPageVo {
 
-    private Integer learnCount;
-    private Integer reviewCount;
+    private Integer learnCount; //学习量
+    private Integer reviewCount; //复习量
 
 }

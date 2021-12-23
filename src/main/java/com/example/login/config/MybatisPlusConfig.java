@@ -24,11 +24,11 @@ public class MybatisPlusConfig {
             }
             // 获取参数方法
             Map<String, Integer> paramMap = RequestDataHelper.getRequestData();
-            System.out.println("tableName : --------" + tableName);
+//            System.out.println("tableName : --------" + tableName);
             if (paramMap == null || paramMap.size() == 0) {
                 return tableName;
             }
-            paramMap.forEach((k, v) -> System.err.println(k + "----" + v));
+//            paramMap.forEach((k, v) -> System.err.println(k + "----" + v));
             Integer dictID = paramMap.get("dictID");
 
             if (dictID != null) {

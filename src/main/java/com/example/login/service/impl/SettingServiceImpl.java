@@ -37,7 +37,7 @@ public class SettingServiceImpl implements SettingService {
         int plan = planMapper.updateCount(userid, studyword);
         int info = userInfoMapper.updateReviewCnt(userid, reviewCnt);
 
-        System.out.println("终于成功了！！！");
+//        System.out.println("终于成功了！！！");
 
         if (plan == 0 || info == 0) {
             return Result.fail(500, "系统出错啦");

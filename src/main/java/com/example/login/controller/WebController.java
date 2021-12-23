@@ -49,4 +49,10 @@ public class WebController {
     public String toStatistics() {
         return "statistics";
     }
+
+    @SaCheckLogin
+    @GetMapping("/game")
+    public String toGame() {
+        return "game";
+    }
 }

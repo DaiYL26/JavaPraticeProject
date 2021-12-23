@@ -5,11 +5,16 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.example.login.service.UserService;
 import com.example.login.vo.Result;
 import com.example.login.vo.UserVo;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
+
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class ApiController {
@@ -22,7 +27,7 @@ public class ApiController {
 
     @PostMapping("/login")
     public Result login(String account, String password) {
-
+        log.info(account + " try login at " + new Date().toString());
         UserVo userVo = userService.checkUser(account, password);
 
         if (userVo != null) {
@@ -91,6 +96,7 @@ public class ApiController {
 
     }
 
+    @SaCheckLogin
     @GetMapping("/isLogin")
     public Result isLogin() {
 //        StpUtil.checkLogin();

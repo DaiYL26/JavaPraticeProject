@@ -50,7 +50,7 @@ const AttributeBinding = {
             if (this.searchInput === null || this.searchInput.trim() == '')
                 return
             if (isletter.test(this.searchInput)) {
-                console.log('query/en')
+                // console.log('query/en')
                 $.post("/query/en",{
                     word: that.searchInput
                 }, function (res) {
@@ -63,9 +63,9 @@ const AttributeBinding = {
                 $.post("/query/zh",{
                     mean: that.searchInput, limit: 5
                 }, function (res) {
-                    console.log(res)
+                    // console.log(res)
                     that.searchRes = JSON.parse(res.data)
-                    console.log(that.searchRes)
+                    // console.log(that.searchRes)
                     $('#myModal').modal()
                 })
             }
@@ -123,11 +123,11 @@ const AttributeBinding = {
 
             setTimeout(function () {
                 that.isConfirm = false
-                console.log(that.words[that.curIndex].json.word.trim())
+                // console.log(that.words[that.curIndex].json.word.trim())
                 if (that.speelWord.trim() === that.words[that.curIndex].json.word.trim()) {
                     console.log('正确')
 
-                    console.log(that.curIndex);
+                    // console.log(that.curIndex);
                     $.post("/Review/updatePriorWord", {
                         userid: that.user.id,
                         dictID: that.words[that.curIndex].dictID,
@@ -135,7 +135,7 @@ const AttributeBinding = {
                         isRight: true
                     })
                     if (that.curIndex + 1 >= that.words.length) {
-                        console.log(that.curIndex, "++");
+                        // console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
                         $.post("/Review/setReviewStatus", {
@@ -149,7 +149,7 @@ const AttributeBinding = {
 
                 } else {
                     console.log('拼写错误')
-                    console.log(that.curIndex);
+                    // console.log(that.curIndex);
                     $.post("/Review/updatePriorWord", {
                         userid: that.user.id,
                         dictID: that.words[that.curIndex].dictID,
@@ -157,7 +157,7 @@ const AttributeBinding = {
                         isRight: false
                     })
                     if (that.curIndex + 1 >= that.words.length) {
-                        console.log(that.curIndex, "++");
+                        // console.log(that.curIndex, "++");
                         that.is_test = false
                         that.is_done = true
                         $.post("/Review/setReviewStatus", {
@@ -197,7 +197,7 @@ const AttributeBinding = {
                 count: count,
                 isMore: isMore
             }, function (res) {
-                console.log(res)
+                // console.log(res)
                 if (res.code == 200) {
                     if (res.data.length == 0) {
                         that.is_home = false
@@ -209,7 +209,7 @@ const AttributeBinding = {
                         // console.log(word)
                         that.words.push(res.data[i])
                     }
-                    console.log(that.words);
+                    // console.log(that.words);
                 }
             })
         },
@@ -220,7 +220,7 @@ const AttributeBinding = {
                 userid: that.user.id
             }, function (res) {
                 if (res.code == 200) {
-                    console.log(res.data)
+                    // console.log(res.data)
                     let status = res.data
                     if (status.isNotPlan || status.isNotMen) {
                         that.is_home = false
@@ -289,3 +289,14 @@ const AttributeBinding = {
 }
 
 Vue.createApp(AttributeBinding).mount('#app')
+
+
+let handler = setInterval(function () {
+    $.get("api/isLogin", function (res) {
+        if (res.data !== true) {
+            clearInterval(handler)
+            alert("您的账号已经在别处登录！")
+            $(location).attr("href", "/")
+        }
+    })
+}, 3000)

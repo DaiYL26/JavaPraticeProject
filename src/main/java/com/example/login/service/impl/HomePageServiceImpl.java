@@ -6,6 +6,7 @@ import com.example.login.dao.PlanMapper;
 import com.example.login.model.Dict;
 import com.example.login.model.Plan;
 import com.example.login.service.HomePageService;
+import com.example.login.utils.TimeUtils;
 import com.example.login.vo.HomePageVo;
 import com.example.login.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,13 +47,19 @@ public class HomePageServiceImpl implements HomePageService {
         Dict dict = dictMapper.selectById(plan.getDictID());
 
         homePageVo.setIsDone(isDone);
-        homePageVo.setCount(plan.getCount() - Integer.parseInt(todayNum));
+        int count = plan.getCount() - Integer.parseInt(todayNum);
+        if (count <= 0) {
+            count = 0;
+            redisTemplate.opsForValue().set(userid + ":isDone", "true");
+            redisTemplate.expireAt(userid + ":isDone", TimeUtils.getNextDayTimestamp());
+        }
+        homePageVo.setCount(count);
         homePageVo.setDictName(dict.getDictName());
         homePageVo.setHadMem(plan.getHadMem());
         homePageVo.setTotalNum(dict.getTotalNum());
         homePageVo.setDictID(plan.getDictID());
 
-        if (redisTemplate.opsForValue().get(userid + ":isDone") != null) {
+        if (redisTemplate.opsForValue().get(userid + ":isDone") != null && count == 0) {
             homePageVo.setCount(plan.getCount());
         }
 

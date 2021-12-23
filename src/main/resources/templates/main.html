@@ -11,10 +11,10 @@
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="/js/bs4.pop.js"></script>
     <style>
         body {
-            background-repeat: no-repeat;
             background-size: 100%;
         }
     </style>
@@ -37,6 +37,9 @@
                 <a class="nav-link" href="/statistics">统计</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/game">对战</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/books">单词书</a>
             </li>
             <li class="nav-item">
@@ -51,7 +54,7 @@
     <!-- 搜索框 -->
     <div class="shadow mx-auto w-25 mt-5" style="min-width: 300px;">
         <div class="input-group mb-3">
-            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <input v-model="searchInput" type="text" class="form-control" placeholder="输入您要查找的单词/中文释义" aria-label="Recipient's username" aria-describedby="button-addon2">
             <div class="input-group-append">
               <button class="btn border-right border-bottom border-top" type="button" id="button-addon2" @click="doSearch">查找</button>
             </div>
@@ -62,7 +65,7 @@
         <!-- 选单词书 -->
         <div class="card shadow" v-if="is_null" style=" min-height: 50vh;">
             <span class="mx-auto mt-5 text-center mb-5" style="font-size: 2rem;" >欢迎，使用懂生词！</span>
-            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="toReview">开始制定学习计划</button>
+            <button type="button" class="btn mt-5 w-50 mx-auto btn-success btn-lg btn-block" @click="toBooks">开始制定学习计划</button>
         </div>
         <!-- 首页 -->
         <div class="card shadow" v-if="is_home" style=" min-height: 50vh;">
@@ -89,7 +92,7 @@
                         <span style="font-size: 1.5rem;">词典总数</span>
                         </div>
                     </div>
-                    <button type="button" v-if="status.dictID" class="btn w-50 mt-5 mx-auto btn-success btn-lg btn-block" @click="starLreaning">{{status.isDone ? '再来一组' : '开始学习'}}</button>
+                    <button type="button" v-if="status.dictID" class="btn w-50 mt-5 mx-auto btn-success btn-lg btn-block" @click="starLreaning">{{status.isDone ? '今天加练' : '开始学习'}}</button>
                     
                 </div>
             </div>

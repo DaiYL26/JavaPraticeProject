@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserVo {
 
-    private Long id;
+    private Long id; //用户id
 
-    private String mail;
+    private String mail; //用户邮箱
 
-    private String phone;
+    private String phone; //用户手机号
 
-    private String nickName;
+    private String nickName; //用户昵称
 }

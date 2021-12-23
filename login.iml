@@ -42,12 +42,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.12" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-oxm:5.3.12" level="project" />
     <orderEntry type="library" name="Maven: io.lettuce:lettuce-core:6.1.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.69.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.69.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.69.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.69.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.69.Final" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.69.Final" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.4.11" level="project" />
     <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:2.5.6" level="project" />
@@ -64,7 +58,6 @@
     <orderEntry type="library" name="Maven: org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: redis.clients:jedis:3.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.32" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.5.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-json:2.5.6" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.5" level="project" />
@@ -89,7 +82,45 @@
     <orderEntry type="library" name="Maven: cn.dev33:sa-token-spring-boot-starter:1.27.0" level="project" />
     <orderEntry type="library" name="Maven: cn.dev33:sa-token-servlet:1.27.0" level="project" />
     <orderEntry type="library" name="Maven: cn.dev33:sa-token-core:1.27.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.11.1" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.49" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-dns:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-haproxy:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http2:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-memcache:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-mqtt:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-redis:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-smtp:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-stomp:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-xml:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml:aalto-xml:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:stax2-api:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver-dns:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-rxtx:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.rxtx:rxtx:2.1.7" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-sctp:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-udt:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.barchart.udt:barchart-udt-bundle:2.3.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-epoll:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-unix-common:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-kqueue:4.1.69.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver-dns-native-macos:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-transport-native-epoll:linux-aarch_64:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-transport-native-kqueue:osx-x86_64:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-transport-native-kqueue:osx-aarch_64:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.69.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.netty:netty-resolver-dns-native-macos:osx-aarch_64:4.1.69.Final" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-boot-starter:3.4.3.4" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus:3.4.3.4" level="project" />
     <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-extension:3.4.3.4" level="project" />
