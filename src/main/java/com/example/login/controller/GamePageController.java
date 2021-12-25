@@ -23,13 +23,11 @@ public class GamePageController {
 
     @PostMapping("/getGameWords")
     public Result getGameWord(String gameId) {
-        System.out.println(gameId);
         return gamePageService.getGameWords(gameId);
     }
 
     @PostMapping("/getStatus")
     public Result getStatus(Long id) {
-        System.out.println(id);
         return gamePageService.getRankScore(id);
     }
 

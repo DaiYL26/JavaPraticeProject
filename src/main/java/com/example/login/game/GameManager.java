@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
+@Slf4j
 @Component
 public class GameManager {
 
@@ -45,6 +46,10 @@ public class GameManager {
         this.context = context;
     }
 
+    public Integer getOpponent(Integer id) {
+        return opponentsMap.get(id);
+    }
+
     public void removeChannel(Integer id) {
         channelManager.removeChannel(id);
     }
@@ -59,6 +64,10 @@ public class GameManager {
     }
     public Integer getIdByChannel(ChannelHandlerContext ctx) {
         return channelManager.getIdByChannel(ctx);
+    }
+
+    public ChannelHandlerContext getChannelById(Integer id) {
+        return channelManager.getChannelById(id);
     }
 
     /**
@@ -124,10 +133,10 @@ public class GameManager {
         gameKiller.setGameId(gameId);
         gameKiller.setPlayerA(playerAId);
         gameKiller.setPlayerB(playerBId);
-
-        System.out.println(gameKiller);
+//        System.out.println(gameKiller);
 
         gameKillerServer.addKillerTask(gameKiller, 60);
+        log.info(gameId + " : killer release");
     }
 
     public void setGamedReady(ChannelHandlerContext ctx) {

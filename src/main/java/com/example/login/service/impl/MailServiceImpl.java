@@ -33,7 +33,7 @@ public class MailServiceImpl implements MailService {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        mailMessage.setText("您的验证码是：<strong>" + code + "</strong> , 有效时间为 60 秒");
+        mailMessage.setText("您的验证码是：" + code + " , 有效时间为 60 秒");
         mailMessage.setFrom("1516162635@qq.com");
         mailMessage.setTo(toMail);
         mailMessage.setSubject("验证码");

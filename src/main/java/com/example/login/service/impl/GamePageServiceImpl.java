@@ -90,7 +90,7 @@ public class GamePageServiceImpl implements GamePageService {
 
         try {
             String json = (String) redisTemplate.opsForHash().get(gameId, "json");
-            System.out.println(json);
+//            System.out.println(json);
             return Result.success(json);
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +137,6 @@ public class GamePageServiceImpl implements GamePageService {
             String json = objectMapper.writeValueAsString(words);
             opsForHash.put(gameId, "json", json);
 
-            log.info("------->" + gameId);
             return true;
 
         } catch (Exception e) {
@@ -176,11 +175,11 @@ public class GamePageServiceImpl implements GamePageService {
             gameRecordMapper.insert(gameRecord);
 
             if (playerAScore > playerBScore) {
-                System.out.println(playerAId);
+//                System.out.println(playerAId);
                 userInfoMapper.updateRankScore(playerAId, 10);
                 opsForValue.increment(playerAId + ":score", 10);
             } else if (playerBScore > playerAScore){
-                System.out.println(playerBId);
+//                System.out.println(playerBId);
                 userInfoMapper.updateRankScore(playerBId, 10);
                 opsForValue.increment(playerBId + ":score", 10);
             } else {
@@ -219,13 +218,13 @@ public class GamePageServiceImpl implements GamePageService {
         try {
             HashOperations<String, Object, Object> opsForHash = redisTemplate.opsForHash();
             Boolean aBoolean = redisTemplate.hasKey(answer.getGameId());
-            System.out.println(aBoolean);
+//            System.out.println(aBoolean);
             if (aBoolean == null || aBoolean.equals(Boolean.FALSE) || answer.getSpelling() == null) {
                 return null;
             }
 
             String res = (String) opsForHash.get(answer.getGameId(), "word:" + answer.getWordRank());
-            System.out.println(res + "----->" + "word:" + answer.getWordRank());
+//            System.out.println(res + "----->" + "word:" + answer.getWordRank());
             if (res == null) {
                 return null;
             }

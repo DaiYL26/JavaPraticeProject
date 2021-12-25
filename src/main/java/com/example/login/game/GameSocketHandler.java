@@ -1,6 +1,5 @@
 package com.example.login.game;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
 import com.example.login.game.model.Answer;
 import com.example.login.game.model.GameMessage;
@@ -10,16 +9,15 @@ import com.example.login.utils.JSONUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @Scope("prototype")
 public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
@@ -39,7 +37,7 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception { // (1)
-		Channel incoming = ctx.channel();
+
 		String text = msg.text();
 
 		ObjectMapper objectMapper = null;
@@ -57,6 +55,27 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 					ctx.close();
 					return;
 				}
+
+				// 玩家已经在游戏中，不能进行匹配
+				Integer opponent = gameManager.getOpponent(gameMessage.getId());
+				if (opponent != null) {
+					GameMessage message = new GameMessage(-1, MessageType.CANCEL_MATCHING, "上一局还未结束，请等待！");
+					ctx.channel().writeAndFlush(new TextWebSocketFrame(objectMapper.writeValueAsString(message)));
+					ctx.close();
+					return;
+				}
+
+				// 防止玩家重复加入匹配池
+				ChannelHandlerContext channel = gameManager.getChannelById(gameMessage.getId());
+				if (channel != null) {
+					System.out.println("repeat");
+					matchPool.remove(gameMessage.getId());
+					gameManager.removeChannel(gameMessage.getId());
+					GameMessage message = new GameMessage(-1, MessageType.CANCEL_MATCHING, "");
+					channel.channel().writeAndFlush(new TextWebSocketFrame(objectMapper.writeValueAsString(message)));
+					channel.close();
+				}
+
 				System.out.println(gameMessage);
 				Integer id = gameMessage.getId();
 
@@ -71,7 +90,11 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 			} else if (gameMessage.getType() == MessageType.CANCEL_MATCHING) {
 				matchPool.remove(gameMessage.getId());
 				gameManager.removeChannel(gameMessage.getId());
+			} else {
+
+				ctx.close();
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -83,7 +106,7 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 	}
 
 	private void playerOnReady(ChannelHandlerContext ctx) {
-		System.out.println("ready");
+//		System.out.println("ready");
 		gameManager.setGamedReady(ctx);
 
 	}
@@ -107,7 +130,7 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 
 	private void checkAndSend(Integer id, Answer answer) {
 		gameManager.validateAnswer(id, answer);
-		System.out.println("check and send : " + answer);
+//		System.out.println("check and send : " + answer);
 	}
 
 	private void commitGame() {
@@ -117,33 +140,33 @@ public class GameSocketHandler extends SimpleChannelInboundHandler<TextWebSocket
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception { // (2)
 		Channel incoming = ctx.channel();
-		System.out.println("Client:" + incoming.remoteAddress() + "加入");
+		log.info("Client:" + incoming.remoteAddress() + "加入");
 	}
 
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception { // (3)
 		Channel incoming = ctx.channel();
 		Integer channel = gameManager.getIdByChannel(ctx);
-		System.out.println("Client:" + incoming.remoteAddress() + "离开");
+		log.info("Client:" + incoming.remoteAddress() + "离开");
 	}
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception { // (5)
 		Channel incoming = ctx.channel();
-		System.out.println("Client:" + incoming.remoteAddress() + "在线");
+		log.info("Client:" + incoming.remoteAddress() + "在线");
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception { // (6)
 		Channel incoming = ctx.channel();
-		System.out.println("Client:" + incoming.remoteAddress() + "掉线");
+		log.info("Client:" + incoming.remoteAddress() + "掉线");
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) // (7)
 			throws Exception {
 		Channel incoming = ctx.channel();
-		System.out.println("Client:" + incoming.remoteAddress() + "异常");
+		log.error("Client:" + incoming.remoteAddress() + "异常");
 		gameManager.removeChannel(ctx);
 		// 当出现异常就关闭连接
 		cause.printStackTrace();

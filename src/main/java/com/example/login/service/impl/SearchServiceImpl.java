@@ -2,6 +2,7 @@ package com.example.login.service.impl;
 
 import com.example.login.rpcservice.QueryHandler;
 import com.example.login.service.SearchService;
+import com.example.login.utils.TProtocolUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -15,21 +16,19 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public String queryForEn(String word) throws TException {
-        TTransport transport = null;
+        TProtocol protocol = null;
         String res = null;
         try {
-            transport = new TSocket("localhost", 9090);
-            transport.open();
-            TProtocol protocol = new TBinaryProtocol(transport);
+            protocol = TProtocolUtils.borrowTProtocol();
             QueryHandler.Client client = new QueryHandler.Client(protocol);
             // 按英文查
             res = client.query(word);
-        } catch (TException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
-            if (transport != null) {
-                transport.close();
+            if (protocol != null) {
+                TProtocolUtils.returnObject(protocol);
             }
         }
         return res;
@@ -37,21 +36,19 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public String queryForZh(String mean, Integer limit) throws TException {
-        TTransport transport = null;
+        TProtocol protocol = null;
         String res = null;
         try {
-            transport = new TSocket("localhost", 9090);
-            transport.open();
-            TProtocol protocol = new TBinaryProtocol(transport);
+            protocol = TProtocolUtils.borrowTProtocol();
             QueryHandler.Client client = new QueryHandler.Client(protocol);
             // 按英文查
             res = client.queryZH(mean, limit);
-        } catch (TException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         } finally {
-            if (transport != null) {
-                transport.close();
+            if (protocol != null) {
+                TProtocolUtils.returnObject(protocol);
             }
         }
         return res;

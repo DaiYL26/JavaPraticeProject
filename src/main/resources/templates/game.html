@@ -12,7 +12,7 @@
     <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="/js/bs4.pop.js"></script>
-    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://cdn.staticfile.org/vue/3.0.5/vue.global.js"></script>
     <style>
         body {
             background-size: 100%;
@@ -25,7 +25,7 @@
     <span class="navbar-brand text-monospace font-weight-light" style="float: left;" href="#">懂 生 词</span>
     <ul class="navbar-nav mx-auto">
         <li class="nav-item ">
-            <a class="nav-link active" href="/main">首页</a>
+            <a class="nav-link " href="/main">首页</a>
         </li>
         <li class="nav-item ">
             <a class="nav-link" href="/review">复习</a>
@@ -37,7 +37,7 @@
             <a class="nav-link" href="/statistics">统计</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/game">对战</a>
+            <a class="nav-link active" href="/game">对战</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="/books">单词书</a>
@@ -124,7 +124,7 @@
                 <span style="font-size: 2rem;" v-else>{{curWord.word}}</span>
             </div>
             <div class="input-group  mx-auto mb-3 mt-5 w-25">
-                <input type="text" v-model="speelWord" class="form-control" placeholder="请输入正确的拼写" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <input type="text" v-model="speelWord" @keyup.enter="testConfirm" class="form-control" placeholder="请输入正确的拼写" aria-label="Recipient's username" aria-describedby="button-addon2">
             </div>
             <div class="mx-auto text-monospace text-center" style="font-size: 2rem;">
                 <a class="font-italic font-weight-light mr-5" style="font-size: 1rem; cursor: pointer;" @click="playAudio(1)">

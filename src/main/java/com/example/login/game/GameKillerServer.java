@@ -14,7 +14,7 @@ public class GameKillerServer {
 
     public void addKillerTask(GameKiller gameKiller, Integer delay) {
         executorService.schedule(gameKiller, delay, TimeUnit.SECONDS);
-        System.out.println("killer release");
+
     }
 
 }

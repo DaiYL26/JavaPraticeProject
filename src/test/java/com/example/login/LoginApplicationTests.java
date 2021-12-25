@@ -9,12 +9,16 @@ import com.example.login.game.GameSocketHandler;
 import com.example.login.game.MatchPool;
 import com.example.login.game.model.GameUser;
 import com.example.login.model.ReviewPrior;
+import com.example.login.rpcservice.QueryHandler;
 import com.example.login.service.*;
 import com.example.login.service.impl.ReviewServiceImpl;
 import com.example.login.utils.JSONUtils;
+import com.example.login.utils.TProtocolUtils;
 import com.example.login.vo.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,7 +83,26 @@ class LoginApplicationTests {
     @Test
     void contextLoads() throws Exception {
 
-        System.out.println(redisTemplate.hasKey("1640165168942"));
+
+        TProtocol tProtocol1 = TProtocolUtils.borrowTProtocol();
+        QueryHandler.Client client1 = new QueryHandler.Client(tProtocol1);
+        System.out.println(client1.query("hello"));
+        System.out.println(client1.query("fast"));
+
+        TProtocolUtils.returnObject(tProtocol1);
+
+        TProtocol tProtocol = TProtocolUtils.borrowTProtocol();
+
+        System.out.println(tProtocol);
+        QueryHandler.Client client = new QueryHandler.Client(tProtocol);
+        System.out.println("...");
+        System.out.println(client.query("who"));
+        System.out.println("qqq");
+        TProtocolUtils.returnObject(tProtocol);
+
+
+        Thread.sleep(5000);
+
 
     }
 }
