@@ -45,8 +45,8 @@ public class MatchPool {
 
     public void match() throws JsonProcessingException {
 
-//        gameManager.sizeInfo();
-//        log.info(users.size() + "");
+        users.forEach(GameUser::increment);
+
         while (users.size() >= 2) {
 
             GameUser playerA = users.poll();
@@ -60,10 +60,9 @@ public class MatchPool {
 
                 log.info("Match success : " + playerA + " vs " + playerB);
             } else {
-                playerA.increment();
-                playerB.increment();
                 residue.add(playerA);
-                residue.add(playerB);
+                users.add(playerB);
+//                residue.add(playerB);
             }
 
         }
